@@ -189,11 +189,8 @@ VERSION HISTORY:
 #include "base64.h"
 
 static void decodeblock( const uint8_t *in, uint8_t *out );
-
-/*
-** Translation Table to decode (created by author)
-*/
-static const uint8_t cd64[]="|$$$}rstuvwxyz{$$$$$$$>?@ABCDEFGHIJKLMNOPQRSTUVW$$$$$$XYZ[\\]^_`abcdefghijklmnopq";
+static size_t decode_core( const uint8_t *table, uint8_t start,
+                           const uint8_t *input, const size_t input_size, uint8_t *output );
 
 /*
 ** decodeblock
@@ -226,8 +223,34 @@ size_t b64_get_decoded_buffer_size( const size_t encoded_size )
 */
 size_t b64_decode( const uint8_t *input, const size_t input_size, uint8_t *output )
 {
+    /*
+    ** Translation Table to decode (created by author)
+    */
+    static const uint8_t cd64[]="|$$$}rstuvwxyz{$$$$$$$>?@ABCDEFGHIJKLMNOPQRSTUVW$$$$$$XYZ[\\]^_`abcdefghijklmnopq";
+
+    return decode_core( cd64, 43, input, input_size, output );
+}
+
+/*
+** decode b64url
+**
+** decode a base64url encoded stream discarding padding, line breaks and noise
+*/
+size_t b64url_decode( const uint8_t *input, const size_t input_size, uint8_t *output )
+{
+    /*
+    ** Translation Table to decode (created by Weston Schmidt)
+    */
+    static const uint8_t cd64url[]="|$$rstuvwxyz{$$$$$$$>?@ABCDEFGHIJKLMNOPQRSTUVW$$$$}$XYZ[\\]^_`abcdefghijklmnopq";
+
+    return decode_core( cd64url, 45, input, input_size, output );
+}
+
+static size_t decode_core( const uint8_t *table, uint8_t start,
+                           const uint8_t *input, const size_t input_size, uint8_t *output )
+{
+
     uint8_t in[4], v;
-    unsigned int vMinus43;
     uint8_t *out = output;
     int i, len;
     size_t count = 0;
@@ -238,8 +261,7 @@ size_t b64_decode( const uint8_t *input, const size_t input_size, uint8_t *outpu
             while(    (count < input_size)
                    && (v == 0) ) {
                 v = input[count++];
-                vMinus43 = v - 43;    // so that compiler won't generate (v_minus43)[v], which makes resetParser compaction fragile!
-                v = (vMinus43 > (122-43)) ? 0 : cd64[vMinus43];
+                v = (uint8_t) ((v < start || v > 122) ? 0 : table[ v - start ]);
                 if( v ) {
                     v = (uint8_t) ((v == '$') ? 0 : v - 61);
                 }

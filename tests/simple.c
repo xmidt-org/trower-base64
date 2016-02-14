@@ -23,7 +23,8 @@
 #include "../src/base64.h"
 
 bool test_encoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size );
-bool test_decoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size );
+bool test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
+                         uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size );
 
 void test_encoded_size() {
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(0), 0);
@@ -75,20 +76,34 @@ bool test_encoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_
 }
 
 void test_decode() {
-    CU_ASSERT_FALSE(test_decoded_stuff( (uint8_t*)"bGVhc3VyZS4=", 12, (uint8_t*)"leasure.", 8 ));
-    CU_ASSERT_FALSE(test_decoded_stuff( (uint8_t*)"ZWFzdXJlLg==", 12, (uint8_t*)"easure.", 7 ));
-    CU_ASSERT_FALSE(test_decoded_stuff( (uint8_t*)"YXN1cmUu", 8, (uint8_t*)"asure.", 6 ));
-    CU_ASSERT_FALSE(test_decoded_stuff( (uint8_t*)"c3VyZS4=", 8, (uint8_t*)"sure.", 5 ));
+    uint8_t involved[] = { 0xfb, 0xff, 0xbf };
+
+    CU_ASSERT_FALSE(test_decoded_stuff( b64_decode, (uint8_t*)"bGVhc3VyZS4=", 12, (uint8_t*)"leasure.", 8 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64_decode, (uint8_t*)"ZWFzdXJlLg==", 12, (uint8_t*)"easure.", 7 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64_decode, (uint8_t*)"YXN1cmUu", 8, (uint8_t*)"asure.", 6 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64_decode, (uint8_t*)"c3VyZS4=", 8, (uint8_t*)"sure.", 5 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64_decode, (uint8_t*)"+/+/", 4, involved, 3 ));
 }
 
-bool test_decoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size )
+void test_url_decode() {
+    uint8_t involved[] = { 0xfb, 0xff, 0xbf };
+
+    CU_ASSERT_FALSE(test_decoded_stuff( b64url_decode, (uint8_t*)"bGVhc3VyZS4", 11, (uint8_t*)"leasure.", 8 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64url_decode, (uint8_t*)"ZWFzdXJlLg", 10, (uint8_t*)"easure.", 7 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64url_decode, (uint8_t*)"YXN1cmUu", 8, (uint8_t*)"asure.", 6 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64url_decode, (uint8_t*)"c3VyZS4", 7, (uint8_t*)"sure.", 5 ));
+    CU_ASSERT_FALSE(test_decoded_stuff( b64url_decode, (uint8_t*)"-_-_", 4, involved, 3 ));
+}
+
+bool test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
+                         uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size )
 {
     size_t i;
     bool rv = false;
 
     size_t workspace_size = b64_get_decoded_buffer_size(raw_size);
     uint8_t *workspace = malloc(workspace_size);
-    size_t num_chars = b64_decode(raw, raw_size, workspace);
+    size_t num_chars = (fn)(raw, raw_size, workspace);
     CU_ASSERT_EQUAL( expected_size, num_chars );
     rv |= ( expected_size != num_chars );
     if( rv ) {
@@ -115,6 +130,7 @@ void add_suites( CU_pSuite *suite )
     CU_add_test( *suite, "Get the Decoded Size     ", test_decoded_size );
     CU_add_test( *suite, "Get the Encode           ", test_encode );
     CU_add_test( *suite, "Get the Decode           ", test_decode );
+    CU_add_test( *suite, "Get the URL Decode       ", test_url_decode );
 }
 
 /*----------------------------------------------------------------------------*/

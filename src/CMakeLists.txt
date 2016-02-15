@@ -12,7 +12,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-add_library(base64 b64.c b64-decode.c)
+set(PROJ_BASE64 trower-base64)
 
-install (TARGETS base64 DESTINATION bin)
-install (FILES base64.h DESTINATION include)
+file(GLOB HEADERS base64.h)
+set(SOURCES b64.c b64-decode.c)
+
+add_library(${PROJ_BASE64} STATIC ${HEADERS} ${SOURCES})
+add_library(${PROJ_BASE64}.shared SHARED ${HEADERS} ${SOURCES})
+set_target_properties(${PROJ_BASE64}.shared PROPERTIES OUTPUT_NAME ${PROJ_BASE64})
+
+install (TARGETS ${PROJ_BASE64} DESTINATION lib${LIB_SUFFIX})
+install (TARGETS ${PROJ_BASE64}.shared DESTINATION lib${LIB_SUFFIX})
+install (FILES base64.h DESTINATION include/${PROJ_BASE64})

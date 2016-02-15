@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.3.2)
 
-project(base64)
+project(trower-base64)
 
 add_definitions(-std=c99)
 

@@ -62,18 +62,6 @@ size_t b64_get_decoded_buffer_size( const size_t encoded_size );
 
 
 /**
- * Get the size of the buffer needed to hold the decoded output.
- *
- * @note: The size MAY be larger the the resulting decoded output.
- *
- * @param encoded_size size of the encoded data
- *
- * @return size of the raw data
- */
-size_t b64url_get_decoded_buffer_size( const size_t encoded_size );
-
-
-/**
  * Decodes the base 64 stream.  The produced raw buffer will be placed into the
  * output array.  Consumers of this function are responsible for making sure the
  * output buffer is large enough to hold all of the decoded data.

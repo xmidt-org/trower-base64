@@ -18,8 +18,7 @@ project(base64)
 
 add_definitions(-std=c99)
 
+enable_testing()
+
 add_subdirectory(src)
 add_subdirectory(tests)
-
-enable_testing()
-add_test(NAME Simple COMMAND simple)

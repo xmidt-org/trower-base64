@@ -13,3 +13,6 @@
 #   limitations under the License.
 
 add_library(base64 b64.c b64-decode.c)
+
+install (TARGETS base64 DESTINATION bin)
+install (FILES base64.h DESTINATION include)

@@ -2,6 +2,8 @@
 
 C implementation of base64 encode/decode.
 
+[![Build Status](https://travis-ci.org/Comcast/trower-base64.svg?branch=master)](https://travis-ci.org/Comcast/trower-base64) [![codecov.io](http://codecov.io/github/Comcast/trower-base64/coverage.svg?branch=master)](http://codecov.io/github/Comcast/trower-base64?branch=master)
+
 This is a fork of the implementation Bob Trower produced and released in 2001.
 You can find the original here: http://base64.sourceforge.net/
 

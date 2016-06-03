@@ -16,5 +16,8 @@ project(base64)
 
 add_definitions(-std=c99)
 
+enable_testing()
+
 add_subdirectory(src)
+add_subdirectory(tests)
 

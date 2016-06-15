@@ -2,6 +2,22 @@ language: c
 compiler:
     - gcc
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "pprxTxmyJyZMWvoDpE14eHcOup8ngiPgWNs1goXpxmoql+6IkHN2yZJNzscRNOFn49AXzyKTE/7rnbhxZLMWKbNVirHEeCA0KI5rR3vckdytHREgQF7hl4HbnVSaCyaGbsk6das7PIPXB/okywLnoauLQW0WxQXEnNPcxDE4FlSeDrOjuzBdSZEjSZmuoVVI/JZi+thAdEPJqUAdO7afVjfHsjSeZfJqFdxbt3DQmGRXCVcMmMAAcipAQauhy5P9RDGMsG2I+sKWLxyRqE3HXSCX3w2uTZJ71faACpAxKXS+G+y/sIhq9C3K6BWGE9GGGn0u1eQidKTk22ixUYgd2ttvTIfn64ls6XLYHddcVl1J9l+8dmxbK9pTHXkV+Fsg6y9R/+FSu2QAGME+EOH4lZ8xJXDMrwl6zMksRTl7VWL9T91MyYno+z5QeLXbSlyBHJNG9e5B7e8ETAyt9GvKJR1Jar7I+Orcnt7mD7kIg2NNeMJUVuSLh2c+vCnWR1ffl7Fs7pga3Z/2t8vcWrYSIcpQAj6KXyhdEjKfNGyXnsus1/ajwEk0y+ImMqQBaMJFaNT0YOb3RPGwyJOvVU8e3Mb4zTwE2onzQ3vAba8TB7lpiZO6IZPycH6QSzE43cg0AqYRK+kX/bKi5B1EmpYZqB1emwi+JNJsYAaLX8F/7KA="
+
+addons:
+  coverity_scan:
+    project:
+      name: "Comcast/trower-base64"
+      description: "Build submitted via Travis CI"
+    notification_email: weston_schmidt@alumni.purdue.edu
+    build_command_prepend: "mkdir coverity_build && cd build && cmake .."
+    build_command:   "make"
+    branch_pattern: master
+
 before_install:
     - sudo pip install codecov
 

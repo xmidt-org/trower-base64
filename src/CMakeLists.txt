@@ -15,8 +15,8 @@
 add_library(trower-base64 SHARED b64.c b64-decode.c)
 
 install (FILES
-         ${CMAKE_CURRENT_SOURCE_DIR}/trower-base64/base64.h
-         DESTINATION include)
+         ${CMAKE_CURRENT_SOURCE_DIR}/base64.h
+         DESTINATION include/trower-base64)
 
 set_target_properties(trower-base64 PROPERTIES
         OUTPUT_NAME trower-base64

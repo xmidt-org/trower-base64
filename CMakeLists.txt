@@ -18,7 +18,7 @@ add_definitions(-std=c99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall")
 
-enable_testing()
+include( CTest )
 
 add_subdirectory(src)
 add_subdirectory(tests)

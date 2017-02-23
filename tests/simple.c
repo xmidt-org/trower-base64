@@ -35,6 +35,10 @@ void test_encoded_size() {
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(300), 400);
 }
 
+void test_b64url_encoded_size() {
+    CU_ASSERT_EQUAL(b64url_get_encoded_buffer_size(0), 0);
+}
+
 void test_decoded_size() {
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(0), 0);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(1), 0);
@@ -42,6 +46,21 @@ void test_decoded_size() {
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(3), 0);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(4), 3);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(8), 6);
+}
+
+void test_b64url_decoded_size() {
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(0), 0);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(1), 0);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(2), 1);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(3), 2);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(4), 3);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(8), 6);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(51), 38);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(52), 39);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(53), 39);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(54), 40);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(55), 41);
+	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(56), 42);
 }
 
 void test_encode() {
@@ -128,6 +147,7 @@ void add_suites( CU_pSuite *suite )
     *suite = CU_add_suite( "Base64 encoding tests", NULL, NULL );
     CU_add_test( *suite, "Get the Encoded Size     ", test_encoded_size );
     CU_add_test( *suite, "Get the Decoded Size     ", test_decoded_size );
+	CU_add_test( *suite, "Get the base64url Decoded Size", test_b64url_decoded_size );
     CU_add_test( *suite, "Get the Encode           ", test_encode );
     CU_add_test( *suite, "Get the Decode           ", test_decode );
     CU_add_test( *suite, "Get the URL Decode       ", test_url_decode );

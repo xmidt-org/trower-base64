@@ -207,6 +207,19 @@ VERSION HISTORY:
 **char cb64[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 */
 
+
+/**
+ *  Get the size of the buffer required to hold the decoded data when base64 url encoded.
+ *  Not supported
+ */
+size_t b64url_get_encoded_buffer_size( const size_t decoded_size )
+{
+	return decoded_size;
+}
+
+/**
+ *  Get the size of the buffer required to hold the decoded data when base64 encoded.
+ */
 size_t b64_get_encoded_buffer_size( const size_t decoded_size )
 {
     return ((decoded_size + 2) / 3) << 2;

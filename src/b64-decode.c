@@ -204,6 +204,29 @@ static void decodeblock( const uint8_t *in, uint8_t *out )
     out[ 2 ] = (uint8_t ) (((in[2] << 6) & 0xc0) | in[3]);
 }
 
+/**
+ * Get the size of the buffer needed to hold the output decoded from
+ * base64url encoded data.
+ */
+size_t b64url_get_decoded_buffer_size( const size_t encoded_size )
+{
+	size_t decoded_size;
+    if(    (0 == encoded_size)
+        || (0 == encoded_size >> 2) ) {
+        return 0;
+    }
+
+    decoded_size = (encoded_size >> 2) * 3;
+	if( (encoded_size & 0x3)==2 ) decoded_size++;
+	if( (encoded_size & 0x3)==3 ) decoded_size+=2;
+	
+    return decoded_size;
+}
+
+/**
+ * Get the size of the buffer needed to hold the output decoded from
+ * base64 encoded data.
+ */
 size_t b64_get_decoded_buffer_size( const size_t encoded_size )
 {
     size_t decoded_size;

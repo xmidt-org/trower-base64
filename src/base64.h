@@ -33,6 +33,18 @@ extern "C" {
  */
 size_t b64_get_encoded_buffer_size( const size_t decoded_size );
 
+/**
+ *
+ *  Get the size of the buffer required to hold the decoded data when base64 url encoded.
+ *
+ *  @note : Not supported 
+ *
+ *  @param decoded_size size of the decoded date
+ *
+ *  @return size of the buffer required to hold the encoded data
+ */
+size_t b64url_get_encoded_buffer_size( const size_t decoded_size );
+
 
 /**
  *  Encodes the input into base 64.  The base 64 produced string will be placed
@@ -60,6 +72,17 @@ void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output 
  */
 size_t b64_get_decoded_buffer_size( const size_t encoded_size );
 
+/**
+ * Get the size of the buffer needed to hold the output decoded from
+ * base64url encoded data.
+ *
+ * @note: The size MAY be larger the the resulting decoded output.
+ *
+ * @param encoded_size size of the base64url encoded data
+ *
+ * @return size of the raw data
+ */
+size_t b64url_get_decoded_buffer_size( const size_t encoded_size );
 
 /**
  * Decodes the base 64 stream.  The produced raw buffer will be placed into the

@@ -211,11 +211,7 @@ static void decodeblock( const uint8_t *in, uint8_t *out )
 size_t b64url_get_decoded_buffer_size( const size_t encoded_size )
 {
 	size_t decoded_size;
-    if(    (0 == encoded_size)
-        || (0 == encoded_size >> 2) ) {
-        return 0;
-    }
-
+    
     decoded_size = (encoded_size >> 2) * 3;
 	if( (encoded_size & 0x3)==2 ) decoded_size++;
 	if( (encoded_size & 0x3)==3 ) decoded_size+=2;

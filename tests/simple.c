@@ -35,6 +35,10 @@ void test_encoded_size() {
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(300), 400);
 }
 
+void test_b64url_encoded_size() {
+    CU_ASSERT_EQUAL(b64url_get_encoded_buffer_size(0), 0);
+}
+
 void test_decoded_size() {
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(0), 0);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(1), 0);
@@ -47,8 +51,8 @@ void test_decoded_size() {
 void test_b64url_decoded_size() {
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(0), 0);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(1), 0);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(2), 0);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(3), 0);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(2), 1);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(3), 2);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(4), 3);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(8), 6);
 	CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(51), 38);

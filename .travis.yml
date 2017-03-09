@@ -1,32 +1,13 @@
+dist: trusty
+sudo: required
+
 language: c
 compiler:
     - gcc
 
-env:
-  global:
-   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-
-   #   via the "travis encrypt" command using the project repo's public key
-   - secure: "OkgJndYQHjl4Cl8gt9DM2XmBBEeRxbcAQ0OqMwTPW3YkuIpQqYodEpTkEwALzMvvrUgZ2XgH+y2D0Qtdt4kfA1p0cA64RyWM6pnOzQYzdW3+bkebXDwhvlVEzsBsIc+N+ZQNZP5dMX+YlZspKDjTYc7/g8+/WdAHmGZfWli32xNHK1qdYXPKMr7Gu28Z+Z5wC9zi9ATKMqzXx0EShUrqeflv51LFqhr02K725qTNN4h9bHavrF40fj6i5KTomAb49LAXT1PkHANFBn5WvgJZ6+cmNwG3rfJC/cJAWIdU5Xvj/DBXfbScuU791Q+to6cnD0Fj8gbuPLJA8YOqmm4oENkxN0y4/AAVZlQcW91d91/RXJ0RYlBD6LHdMaFZJdvAPEnwBMl7v0oj4qHkakfixpqLP3X615uy9ngfafAm14MOZSjwjJ+3t1X+63spWo4IybocY9HPwabSq3mfG8rTLcaN0AYWGYne46kVTqW0CUgpceVCjjoYmAN/CZ9kuKcYY6VkJ7wzUeEF6BQhkNTwnNqZp8Li+juQylaW/bV4M7cfpFKlRhOFwoNGnAQCMiKoHHwTOpifeEG89B6ygoHRNyAgm9GhHIq2gjdlFsEnnL8PlpzoVU5tkdRKPWdrYswkSNHIenj9X4bT13rkBJWS45v6l6Y+OHcH4Mp7mH6kvYc="
-
-addons:
-  coverity_scan:
-    project:
-      name: "Comcast/trower-base64"
-      description: "Build submitted via Travis CI"
-    notification_email: weston_schmidt@alumni.purdue.edu
-    build_command_prepend: "mkdir coverity_build && cd build && cmake .."
-    build_command:   "make"
-    branch_pattern: master
-
-before_install:
-    - sudo pip install codecov
-    - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca- || echo "Coverity failed this time."
-
 install:
     - sudo apt-get update -qq
-    - sudo apt-get install -y -qq libcunit1 libcunit1-dev lcov
+    - sudo apt-get install -y -qq libcunit1 libcunit1-dev
 
 script:
     - mkdir build
@@ -34,7 +15,6 @@ script:
     - cmake ..
     - make
     - make test
-    - make coverage
 
 after_success:
-    - codecov
+    - bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"

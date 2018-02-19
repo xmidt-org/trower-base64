@@ -12,8 +12,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-set(CMAKE_MACOSX_RPATH 1)
-
 add_library(trower-base64 SHARED b64.c b64-decode.c)
 
 install (FILES

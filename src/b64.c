@@ -235,6 +235,7 @@ size_t b64_get_encoded_buffer_size( const size_t decoded_size )
 void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output )
 {
     size_t remsize = input_size;    // (Note: could just use input_size were it not const)
+    const uint8_t *last = &input[input_size];
     while (remsize > 0) {
         int i;
         uint32_t tmp;
@@ -242,7 +243,11 @@ void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output 
         remsize -= len;
         tmp = 0;
         for (i=0; i < 3; ++i) {
-            tmp = (tmp << 8) | *input++;
+            tmp <<= 8;
+            // Don't read past the end of the input buffer
+            if (input < last) {
+                tmp |= *input++;
+            }
         }
         for (i=4; --i >= 0; ) {
             int index = tmp & 0x3F;

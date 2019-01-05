@@ -14,6 +14,16 @@ compiler:
     - gcc
     - clang
 
+addons:
+  coverity_scan:
+    project:
+      name: "Comcast/trower-base64"
+      description: " C implementation of base64 encode/decode."
+    notification_email: weston_schmidt@alumni.purdue.edu
+    build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
+    build_command:   "make"
+    branch_pattern: master
+
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install cunit; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi

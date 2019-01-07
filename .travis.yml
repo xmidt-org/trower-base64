@@ -27,14 +27,14 @@ addons:
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install cunit; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y -qq libcunit1 libcunit1-dev; fi
+    - DISABLE_VALGRIND=$(if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "false"; else echo "true"; fi)
 
 install:
 
 script:
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
     - make
     - make test
 

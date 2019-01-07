@@ -198,7 +198,7 @@ VERSION HISTORY:
 
 #include "base64.h"
 
-static void decodeblock( const uint8_t *in, uint8_t *out );
+static void decodeblock( const uint8_t *in, uint8_t *out, int len );
 static size_t decode_core( const uint8_t *table, uint8_t start,
                            const uint8_t *input, const size_t input_size, uint8_t *output );
 
@@ -207,11 +207,17 @@ static size_t decode_core( const uint8_t *table, uint8_t start,
 **
 ** decode 4 '6-bit' characters into 3 8-bit binary bytes
 */
-static void decodeblock( const uint8_t *in, uint8_t *out )
+static void decodeblock( const uint8_t *in, uint8_t *out, int len  )
 {   
-    out[ 0 ] = (uint8_t ) (in[0] << 2 | in[1] >> 4);
-    out[ 1 ] = (uint8_t ) (in[1] << 4 | in[2] >> 2);
-    out[ 2 ] = (uint8_t ) (((in[2] << 6) & 0xc0) | in[3]);
+    if( 0 < len ) {
+        out[ 0 ] = (uint8_t ) (in[0] << 2 | in[1] >> 4);
+        if( 1 < len ) {
+            out[ 1 ] = (uint8_t ) (in[1] << 4 | in[2] >> 2);
+            if( 2 < len ) {
+                out[ 2 ] = (uint8_t ) (((in[2] << 6) & 0xc0) | in[3]);
+            }
+        }
+    }
 }
 
 /**
@@ -241,7 +247,7 @@ size_t b64_get_decoded_buffer_size( const size_t encoded_size )
         return 0;
     }
 
-    decoded_size = (encoded_size >> 2) * 3;
+    decoded_size = (encoded_size * 3) >> 2;
     return decoded_size;
 }
 
@@ -305,7 +311,7 @@ static size_t decode_core( const uint8_t *table, uint8_t start,
             }
         }
         if( len ) {
-            decodeblock( in, out );
+            decodeblock( in, out, len - 1 );
             out += len - 1;
         }
     }

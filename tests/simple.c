@@ -75,6 +75,13 @@ void test_encode() {
     CU_ASSERT_FALSE(test_encoded_stuff( (uint8_t*)"", 0, (uint8_t*)"", 0 ));
 }
 
+uint8_t* dup( uint8_t *raw, size_t size )
+{
+    uint8_t *tmp;
+    tmp = (uint8_t*) malloc( sizeof(uint8_t) * size );
+    memcpy( tmp, raw, size );
+    return tmp;
+}
 
 bool test_encoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_t expected_size )
 {
@@ -83,13 +90,11 @@ bool test_encoded_stuff( uint8_t *raw, size_t raw_size, uint8_t *expected, size_
 
     size_t workspace_size = b64_get_encoded_buffer_size(raw_size);
     uint8_t *workspace = malloc(workspace_size);
-    char *tmp;
+    uint8_t *tmp = dup( raw, raw_size );
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
     // Use it, then free it.
-    tmp = (char*) malloc(sizeof(char) * raw_size);
-    memcpy(tmp, raw, raw_size);
-    b64_encode((uint8_t*)tmp, raw_size, workspace);
+    b64_encode(tmp, raw_size, workspace);
     free(tmp);
 
     CU_ASSERT_EQUAL( expected_size, workspace_size );
@@ -135,7 +140,14 @@ bool test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
 
     size_t workspace_size = b64_get_decoded_buffer_size(raw_size);
     uint8_t *workspace = malloc(workspace_size);
-    size_t num_chars = (fn)(raw, raw_size, workspace);
+    uint8_t *tmp = dup( raw, raw_size );
+    size_t num_chars;
+
+    // Copy the data into a malloc'ed buffer so valgrind can help us find problems
+    // Use it, then free it.
+    num_chars = (fn)(tmp, raw_size, workspace);
+    free(tmp);
+
     CU_ASSERT_EQUAL( expected_size, num_chars );
     rv |= ( expected_size != num_chars );
     if( rv ) {

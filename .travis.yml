@@ -10,6 +10,12 @@ matrix:
           dist: trusty
           sudo: required
 
+addons:
+  sonarcloud:
+    organization: "xmidt-org"
+    token:
+      secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
+
 compiler:
     - gcc
     - clang
@@ -37,7 +43,42 @@ script:
     - cd build
     - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
     - make
+    - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
     - make test
 
 after_success:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sonar-scanner -Dproject.settings=./.sonar-project.properties -Dsonar.cfamily.build-wrapper-output=bw-output
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"; fi
+
+stages:
+  - test
+  - tag
+  - release
+
+jobs:
+  include:
+    - stage: tag
+      name: "Tag For Release"
+      if: branch = main && type = push
+      before_script:
+        - echo -e "machine github.com\n  login $GH_TOKEN" > ~/.netrc
+      script:
+        - export OLD_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` | tail -1 | sed 's/v\(.*\)/\1/')
+        - git config --global user.name "xmidt-bot"
+        - git config --global user.email "$BOT_EMAIL"
+        - export TAG=$(cat CHANGELOG.md | perl -0777 -ne 'print "$1" if /.*## \[Unreleased\]\s+## \[(v\d+.\d+.\d+)\].*/s')
+        - export TODAY=`date +'%m/%d/%Y'`
+        - export NOTES=$(cat CHANGELOG.md | perl -0777 -ne 'print "$ENV{TODAY}\n\n$1\n" if /.*## \[$ENV{TAG}\]\s(.*?)\s+## \[(v\d+.\d+.\d+)\].*/s')
+        - if [[ "$TAG" != "" && "$TAG" != "$OLD_VERSION" ]]; then git tag -a "$TAG" -m "$NOTES"; git push origin --tags; echo $?; fi
+      after_success: skip
+
+    - stage: release
+      name: "Make a Release"
+      if: branch != main
+      script: skip
+      deploy:
+        on:
+          all_branches: true
+          tags: true
+        provider: releases
+        api_key: "$GH_TOKEN"

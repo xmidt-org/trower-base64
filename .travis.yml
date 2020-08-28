@@ -10,17 +10,19 @@ matrix:
           dist: trusty
           sudo: required
 
-addons:
-  sonarcloud:
-    organization: "xmidt-org"
-    token:
-      secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
+branches:
+  only:
+    - master
+    - /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 compiler:
     - gcc
     - clang
 
 addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
   coverity_scan:
     project:
       name: "Comcast/trower-base64"
@@ -29,6 +31,10 @@ addons:
     build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
     build_command:   "make"
     branch_pattern: coverity
+  sonarcloud:
+    organization: "xmidt-org"
+    token:
+      secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install cunit; fi
@@ -42,8 +48,7 @@ script:
     - mkdir build
     - cd build
     - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
-    - make
-    - build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+    - build-wrapper-linux-x86-64 --out-dir bw-output make
     - make test
 
 after_success:

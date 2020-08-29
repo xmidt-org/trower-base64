@@ -8,10 +8,10 @@ matrix:
         - os: linux
           dist: trusty
 
-branches:
-  only:
-    - master
-    - /^v[0-9]+\.[0-9]+\.[0-9]+$/
+#branches:
+#  only:
+#    - master
+#    - /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 compiler:
     - gcc

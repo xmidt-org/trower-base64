@@ -51,7 +51,8 @@ script:
     - popd
 
 after_success:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -la; pwd; sonar-scanner -Dproject.settings=.sonar-project.properties; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then find . -type f -name '*.gcda' -exec gcov -p {} +; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sonar-scanner -Dproject.settings=.sonar-project.properties; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"; fi
 
 stages:

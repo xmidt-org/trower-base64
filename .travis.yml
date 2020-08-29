@@ -44,13 +44,14 @@ install:
 
 script:
     - mkdir build
-    - cd build
+    - pushd build
     - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
     - build-wrapper-linux-x86-64 --out-dir bw-output make
     - make test
+    - popd
 
 after_success:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -la; pwd; sonar-scanner -Dproject.settings=../.sonar-project.properties; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ls -la; pwd; sonar-scanner -Dproject.settings=.sonar-project.properties; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"; fi
 
 stages:

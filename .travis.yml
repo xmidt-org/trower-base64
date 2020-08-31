@@ -1,43 +1,111 @@
 language: c
 
-os:
-    - linux
-    - osx
-
-matrix:
-    include:
-        - os: linux
-          dist: trusty
-          sudo: required
-
-compiler:
-    - gcc
-    - clang
-
-addons:
-  coverity_scan:
-    project:
-      name: "Comcast/trower-base64"
-      description: " C implementation of base64 encode/decode."
-    notification_email: weston_schmidt@alumni.purdue.edu
-    build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
-    build_command:   "make"
-    branch_pattern: coverity
+env:
+  global:
+    - DISABLE_VALGRIND="false"
 
 before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew install cunit; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq; fi
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind; fi
-    - DISABLE_VALGRIND=$(if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then echo "false"; else echo "true"; fi)
+    - sudo apt-get update -qq
+    - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind
 
 install:
 
 script:
     - mkdir build
-    - cd build
+    - pushd build
     - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
-    - make
+    - build-wrapper-linux-x86-64 --out-dir bw-output make
     - make test
+    - popd
 
 after_success:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"; fi
+    - find . -type f -name '*.gcda' -exec gcov -p {} +
+    - sonar-scanner -Dproject.settings=.sonar-project.properties
+    - bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"
+
+stages:
+  - test
+  - coverity
+  - tag
+  - release
+
+jobs:
+  include:
+    - stage: test
+      name: "Trusty gcc build"
+      os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+        sonarcloud:
+          organization: "xmidt-org"
+          token:
+            secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
+
+    - stage: test
+      name: "Trusty clang build"
+      os: linux
+      dist: trusty
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+        sonarcloud:
+          organization: "xmidt-org"
+          token:
+            secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
+
+    - stage: tag
+      name: "Tag For Release"
+      if: branch = master && type = push
+      before_script:
+        - echo -e "machine github.com\n  login $GH_TOKEN" > ~/.netrc
+      script:
+        - export OLD_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` | tail -1 | sed 's/v\(.*\)/\1/')
+        - git config --global user.name "xmidt-bot"
+        - git config --global user.email "$BOT_EMAIL"
+        - export TAG=$(cat CHANGELOG.md | perl -0777 -ne 'print "$1" if /.*## \[Unreleased\]\s+## \[(v\d+.\d+.\d+)\].*/s')
+        - export TODAY=`date +'%m/%d/%Y'`
+        - export NOTES=$(cat CHANGELOG.md | perl -0777 -ne 'print "$ENV{TODAY}\n\n$1\n" if /.*## \[$ENV{TAG}\]\s(.*?)\s+## \[(v\d+.\d+.\d+)\].*/s')
+        - if [[ "$TAG" != "" && "$TAG" != "$OLD_VERSION" ]]; then git tag -a "$TAG" -m "$NOTES"; git push origin --tags; echo $?; fi
+      addons:
+      before_install: skip
+      after_success: skip
+
+    - stage: release
+      name: "Make a Release"
+      if: branch != master
+      deploy:
+        on:
+          all_branches: true
+          tags: true
+        provider: releases
+        api_key: "$GH_TOKEN"
+      addons:
+      before_install: skip
+      script: skip
+      after_success: skip
+
+    - stage: coverity
+      name: "Coverity build"
+      if: branch = master
+      os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        coverity_scan:
+          project:
+            name: "Comcast/trower-base64"
+            description: " C implementation of base64 encode/decode."
+          notification_email: weston_schmidt@alumni.purdue.edu
+          build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
+          build_command:   "make"
+          branch_pattern: master
+      after_success: skip
+
+  allow_failures:
+    - stage: coverity

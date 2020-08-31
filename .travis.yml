@@ -1,22 +1,5 @@
 language: c
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-  coverity_scan:
-    project:
-      name: "Comcast/trower-base64"
-      description: " C implementation of base64 encode/decode."
-    notification_email: weston_schmidt@alumni.purdue.edu
-    build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
-    build_command:   "make"
-    branch_pattern: coverity
-  sonarcloud:
-    organization: "xmidt-org"
-    token:
-      secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
-
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind
@@ -38,6 +21,7 @@ after_success:
 
 stages:
   - test
+  - coverity
   - tag
   - release
 
@@ -51,6 +35,13 @@ jobs:
       env:
         - DISABLE_VALGRIND="false"
       addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+        sonarcloud:
+          organization: "xmidt-org"
+          token:
+            secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
 
     - stage: test
       name: "Trusty clang build"
@@ -59,6 +50,14 @@ jobs:
       compiler: clang
       env:
         - DISABLE_VALGRIND="false"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+        sonarcloud:
+          organization: "xmidt-org"
+          token:
+            secure: "lsmnLMUpjLZbjzIZyogM3h14Zq0dwpg/AmfPLxbBixHt+64oXHwxNWFtm5O4CzhGIOtidMtMjG1z5+yoMxMw907vwOhn1+sW8btl5UT0IlOOXLdkquZ/eXNMJJcwRxi1m9dQINfF4Hrrr/YCZwxE/C6JqFRr/+PZBv4m1TBHL+KDBdzHo9W6O/TCYoRMI8eawPfAZzA09TdbW6xPBaJQJJbwSyyZ2EB3G/26ZbKGb7c8YrFBjxYyucFMwKScNjCwp0nKGSg9rP4vK5kUw7o6HPzoe2+vaB4UvBmq5+ntVTVHHiRPbohD4RgL2OkcnT7T4DRR9NFmeiQvvy5vAPNHELa5MuySNId+Gsd+v09q6SqPfFOpq+lAi7UlUA5OPqnPQ9+G2CfxUVpWw2uS4cksOkqCiVVc+4tep0diMsfDVL9UERl0E9abdbwKER+/kfIUPCR0jrsmQ4yH2Dk8xLTPenO5pliVzymNz5A5sU1TGjADC22rRdJQUB/2eYjkMDou/WrD1Eu9vPoqwtgFJxr/fSCIEcxH6HFI9cb/EbWIA3vkGnnc0/kB7MTPmW6rTyPM39asHdlxJPHyGMEur/RfA0jdmWzb/Kd+O1ixOPpb6J8Nl2PRLsLN1/bWuJAzZFSGk0QKdWVJseV269ZZHiRmnx2qHHQg2YAAix5RP/CunRk="
 
     - stage: tag
       name: "Tag For Release"
@@ -89,4 +88,23 @@ jobs:
       addons:
       before_install: skip
       script: skip
+      after_success: skip
+
+  allow_failures:
+    - stage: coverity
+      name: "Coverity build"
+      os: linux
+      dist: trusty
+      compiler: gcc
+      env:
+        - DISABLE_VALGRIND="false"
+      addons:
+        coverity_scan:
+          project:
+            name: "Comcast/trower-base64"
+            description: " C implementation of base64 encode/decode."
+          notification_email: weston_schmidt@alumni.purdue.edu
+          build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
+          build_command:   "make"
+          branch_pattern: coverity
       after_success: skip

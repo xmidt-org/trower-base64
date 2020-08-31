@@ -1,5 +1,9 @@
 language: c
 
+env:
+  global:
+    - DISABLE_VALGRIND="false"
+
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind
@@ -32,8 +36,6 @@ jobs:
       os: linux
       dist: trusty
       compiler: gcc
-      env:
-        - DISABLE_VALGRIND="false"
       addons:
         apt:
           sources:
@@ -48,8 +50,6 @@ jobs:
       os: linux
       dist: trusty
       compiler: clang
-      env:
-        - DISABLE_VALGRIND="false"
       addons:
         apt:
           sources:
@@ -61,7 +61,7 @@ jobs:
 
     - stage: tag
       name: "Tag For Release"
-      if: branch = main && type = push
+      if: branch = master && type = push
       before_script:
         - echo -e "machine github.com\n  login $GH_TOKEN" > ~/.netrc
       script:
@@ -78,7 +78,7 @@ jobs:
 
     - stage: release
       name: "Make a Release"
-      if: branch != main
+      if: branch != master
       deploy:
         on:
           all_branches: true
@@ -90,14 +90,12 @@ jobs:
       script: skip
       after_success: skip
 
-  allow_failures:
     - stage: coverity
       name: "Coverity build"
+      if: branch = master
       os: linux
       dist: trusty
       compiler: gcc
-      env:
-        - DISABLE_VALGRIND="false"
       addons:
         coverity_scan:
           project:
@@ -106,5 +104,8 @@ jobs:
           notification_email: weston_schmidt@alumni.purdue.edu
           build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
           build_command:   "make"
-          branch_pattern: coverity
+          branch_pattern: master
       after_success: skip
+
+  allow_failures:
+    - stage: coverity

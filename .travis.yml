@@ -73,15 +73,20 @@ jobs:
         - export TODAY=`date +'%m/%d/%Y'`
         - export NOTES=$(cat CHANGELOG.md | perl -0777 -ne 'print "$ENV{TODAY}\n\n$1\n" if /.*## \[$ENV{TAG}\]\s(.*?)\s+## \[(v\d+.\d+.\d+)\].*/s')
         - if [[ "$TAG" != "" && "$TAG" != "$OLD_VERSION" ]]; then git tag -a "$TAG" -m "$NOTES"; git push origin --tags; echo $?; fi
+      addons:
+      before_install: skip
       after_success: skip
 
     - stage: release
       name: "Make a Release"
       if: branch != main
-      script: skip
       deploy:
         on:
           all_branches: true
           tags: true
         provider: releases
         api_key: "$GH_TOKEN"
+      addons:
+      before_install: skip
+      script: skip
+      after_success: skip

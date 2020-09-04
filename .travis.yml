@@ -19,9 +19,8 @@ script:
     - mkdir build
     - pushd build
     - cmake .. -DDISABLE_VALGRIND:BOOL=${DISABLE_VALGRIND}
-    - build-wrapper-linux-x86-64 --out-dir bw-output make
-    - make test
     - popd
+    - build-wrapper-linux-x86-64 --out-dir bw-output --build build/ make all test
 
 after_success:
     - find . -type f -name '*.gcda' -exec gcov -p {} +

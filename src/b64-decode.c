@@ -285,9 +285,11 @@ static size_t decode_core( const uint8_t *table, uint8_t start,
                            const uint8_t *input, const size_t input_size, uint8_t *output )
 {
 
-    uint8_t in[4], v;
+    uint8_t in[4];
+    uint8_t v;
     uint8_t *out = output;
-    int i, len;
+    int i;
+    int len;
     size_t count = 0;
 
     while( count < input_size ) {

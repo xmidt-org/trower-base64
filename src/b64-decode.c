@@ -291,7 +291,8 @@ static size_t decode_core( const uint8_t *table, uint8_t start,
     size_t count = 0;
 
     while( count < input_size ) {
-        for( len = 0, i = 0; (i < 4) && (count < input_size); i++ ) {
+        len = 0;
+        for( i = 0; (i < 4) && (count < input_size); i++ ) {
             v = 0;
             while(    (count < input_size)
                    && (v == 0) ) {

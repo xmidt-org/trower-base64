@@ -11,7 +11,7 @@ env:
 
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind gcovr
+    - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind
 
 install:
 
@@ -23,7 +23,7 @@ script:
     - popd
 
 after_success:
-    - gcovr --sonarqube -o coverage.xml
+    - find . -type f -name '*.gcda' -exec gcov -p {} +
     - sonar-scanner -Dproject.settings=.sonar-project.properties
     - bash <(curl -s https://codecov.io/bash) -F unittests || echo "Codecov did not collect coverage reports"
 

@@ -202,12 +202,6 @@ VERSION HISTORY:
 
 #include "base64.h"
 
-/*
-** Translation Table as described in RFC1113
-**char cb64[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-*/
-
-
 /**
  *  Get the size of the buffer required to hold the decoded data when base64 url encoded.
  *  Not supported
@@ -239,7 +233,7 @@ void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output 
     while (remsize > 0) {
         int i;
         uint32_t tmp;
-        int len = (remsize >= 3) ? 3 : remsize; 
+        int len = (remsize >= 3) ? 3 : (int) remsize; // remsize is [0-4]
         remsize -= len;
         tmp = 0;
         for (i=0; i < 3; ++i) {
@@ -250,15 +244,17 @@ void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output 
             }
         }
         for (i=3; i >= 0; i--) {
-            int index = tmp & 0x3F;
+            // Translation Table as described in RFC1113
+            const char map[]= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+            uint8_t index = (uint8_t) (tmp & 0x3F);
             // Note: per earlier code, we only use '=' in at most the last 2 output bytes
             //  The following comparison should still do this (len is 1-3)
-            output[i] =   (i > len) ? '='   // use '=' for chars past end of input
-                        : (index < 26) ? (index + 'A')      //  0-25 = 'A-Z'
-                        : (index < 52) ? (index + ('a'-26)) // 26-51 = 'a-z'
-                        : (index < 62) ? (index + ('0'-52)) // 52-61 = '0-9'
-                        : (index == 62) ? '+'               //    62 = '+'
-                        : '/';                              //    63 = '/'
+            if (i > len) {
+                output[i] = '=';   // use '=' for chars past end of input
+            } else {
+                output[i] = (uint8_t) map[index];
+            }
             tmp >>= 6;
         }
         output += 4;

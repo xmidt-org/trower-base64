@@ -249,7 +249,7 @@ void b64_encode( const uint8_t *input, const size_t input_size, uint8_t *output 
                 tmp |= *input++;
             }
         }
-        for (i=4; --i >= 0; ) {
+        for (i=3; i >= 0; i--) {
             int index = tmp & 0x3F;
             // Note: per earlier code, we only use '=' in at most the last 2 output bytes
             //  The following comparison should still do this (len is 1-3)

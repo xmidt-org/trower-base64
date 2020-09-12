@@ -6,17 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [1.1.3] - 2020-09-11
+## [v1.1.3]
 - Added a more durable release artifact process.
 - Fixed a few code smells according to sonarcloud.io
 
-## [1.1.2] - 2019-01-07
+## [v1.1.2] - 2019-01-07
 - Added valgrind to travis-ci linux builds
 - Fixed output buffer overrun error due to incorrect buffer size answer
 - Fixed output buffer overrun error due to limited characters
 - Fixed input buffer read overrun error
 
-## [1.1.1] - 2018-10-18
+## [v1.1.1] - 2018-10-18
 - Added travis-ci
 - Travis build for MacOSX
 - Fixed build on Mac and Centos
@@ -25,12 +25,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add the trower-base64 directory into the include to fix consumers of this project
 - Changed cmake minimum version required from 3.3.2 to 2.8.7
 
-## [1.1] - 2016-02-15
+## [v1.1] - 2016-02-15
 ### Added
 - Add base64url decode implementaion
 ### Changed
 - Improve cmake files
-## [1.0] - 2016-02-15
+## [v1.0] - 2016-02-15
 ### Added
 - Initial creation
 
@@ -39,8 +39,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Initial creation
 
 [Unreleased]: https://github.com/Comcast/trower-base64/compare/v1.1.3...HEAD
-[1.1.3]: https://github.com/Comcast/trower-base64/compare/v1.1.2...v1.1.3
-[1.1.2]: https://github.com/Comcast/trower-base64/compare/v1.1.1...v1.1.2
-[1.1.1]: https://github.com/Comcast/trower-base64/compare/v1.1...v1.1.1
-[1.1]: https://github.com/Comcast/trower-base64/compare/v1.0...v1.1
-[1.0]: https://github.com/Comcast/trower-base64/compare/3e997140737790d284de03a5ef6f497798673750...v1.0
+[v1.1.3]: https://github.com/Comcast/trower-base64/compare/v1.1.2...v1.1.3
+[v1.1.2]: https://github.com/Comcast/trower-base64/compare/v1.1.1...v1.1.2
+[v1.1.1]: https://github.com/Comcast/trower-base64/compare/v1.1...v1.1.1
+[v1.1]: https://github.com/Comcast/trower-base64/compare/v1.0...v1.1
+[v1.0]: https://github.com/Comcast/trower-base64/compare/3e997140737790d284de03a5ef6f497798673750...v1.0

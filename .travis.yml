@@ -122,7 +122,6 @@ jobs:
           - "sha256sum.txt"
       addons:
       before_install: skip
-      after_success: skip
 
     - stage: coverity
       name: "Coverity build"

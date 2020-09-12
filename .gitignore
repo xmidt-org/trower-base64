@@ -18,6 +18,8 @@ _test
 _cgo_defun.c
 _cgo_gotypes.go
 _cgo_export.*
+*.zip
+*.tar.gz
 
 _testmain.go
 

@@ -8,6 +8,8 @@ branches:
 env:
   global:
     - DISABLE_VALGRIND="false"
+    - TRAVIS_REPO_OWNER=${TRAVIS_REPO_SLUG%/*}
+    - TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
 
 before_install:
     - sudo apt-get update -qq
@@ -84,15 +86,24 @@ jobs:
     - stage: release
       name: "Make a Release"
       if: branch != master
+      script:
+        - export VERSION=${TRAVIS_TAG##*v}
+        - git archive --format=tar.gz --prefix=${TRAVIS_REPO_NAME}-${VERSION}/ -o ${TRAVIS_REPO_NAME}-${VERSION}.tar.gz ${TRAVIS_TAG}
+        - git archive --format=zip    --prefix=${TRAVIS_REPO_NAME}-${VERSION}/ -o ${TRAVIS_REPO_NAME}-${VERSION}.zip    ${TRAVIS_TAG}
+        - sha256sum  ${TRAVIS_REPO_NAME}-${VERSION}.tar.gz  ${TRAVIS_REPO_NAME}-${VERSION}.zip > sha256sum.txt
       deploy:
+        skip_cleanup: true
         on:
           all_branches: true
           tags: true
         provider: releases
         api_key: "$GH_TOKEN"
+        file:
+          - "${TRAVIS_REPO_NAME}-${VERSION}.tar.gz"
+          - "${TRAVIS_REPO_NAME}-${VERSION}.zip"
+          - "sha256sum.txt"
       addons:
       before_install: skip
-      script: skip
       after_success: skip
 
     - stage: coverity

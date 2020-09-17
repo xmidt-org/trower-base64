@@ -12,8 +12,6 @@ env:
     - TRAVIS_REPO_NAME=${TRAVIS_REPO_SLUG#*/}
 
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -y -qq libcunit1 libcunit1-dev valgrind
 
 install:
 
@@ -46,6 +44,13 @@ jobs:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+          packages:
+            - libcunit1
+            - libcunit1-doc
+            - libcunit1-dev
+            - libtool
+            - valgrind
+            - lcov
         sonarcloud:
           organization: "xmidt-org"
           token: "$SONAR_TOKEN"
@@ -59,10 +64,16 @@ jobs:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+          packages:
+            - libcunit1
+            - libcunit1-doc
+            - libcunit1-dev
+            - libtool
+            - valgrind
+            - lcov
         sonarcloud:
           organization: "xmidt-org"
-          token:
-            token: "$SONAR_TOKEN"
+          token: "$SONAR_TOKEN"
       after_success: skip
 
     # How the tag and release targets work
@@ -129,10 +140,19 @@ jobs:
       dist: trusty
       compiler: gcc
       addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libcunit1
+            - libcunit1-doc
+            - libcunit1-dev
+            - libtool
+            - valgrind
+            - lcov
         coverity_scan:
           project:
-            name: "Comcast/trower-base64"
-            description: " C implementation of base64 encode/decode."
+            name: ${TRAVIS_REPO_SLUG}
           notification_email: weston_schmidt@alumni.purdue.edu
           build_command_prepend: "mkdir coverity_build && cd coverity_build && cmake .."
           build_command:   "make"

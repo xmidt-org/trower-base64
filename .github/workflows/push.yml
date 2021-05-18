@@ -44,11 +44,11 @@ jobs:
           unzip -q -o build-wrapper-linux-x86.zip
 
           export SONAR_VERSION=`curl -s https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/ |grep -o "sonar-scanner-cli-[0-9.]*-linux.zip"|sort -r|uniq|head -n 1`
-          curl -s -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/$SONAR_VERSION.sha256
-          echo "  " >> $SONAR_VERSION.sha256
-          echo $SONAR_VERSION >> $SONAR_VERSION.sha256
-          sha256sum -c $SONAR_VERSION.sha256
-          unzip -q sonar-scanner-cli-4.6.0.2311-linux.zip
+          curl -s -L -O "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/$SONAR_VERSION.sha256"
+          echo "  " >> "$SONAR_VERSION.sha256"
+          echo "$SONAR_VERSION" >> "$SONAR_VERSION.sha256"
+          sha256sum -c "$SONAR_VERSION.sha256"
+          unzip -q "$SONAR_VERSION"
 
       - name: CMake
         working-directory: build

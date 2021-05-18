@@ -9,6 +9,7 @@ on:
       - "CHANGELOG.md" # only try to tag if the CHANGELOG has been updated.
     branches:
       - main
+      - master
 
 jobs:
   build:
@@ -25,7 +26,7 @@ jobs:
       - name: export variables and tag commit
         run: |
           export OLD_VERSION=$(git describe --tags `git rev-list --tags --max-count=1` | tail -1)
-          export TAG=$(cat CHANGELOG.md | perl -0777 -ne 'print "$1" if /.*## \[Unreleased\]\s+## \[(v\d+.\d+.\d+)\].*/s')
+          export TAG=$(cat CHANGELOG.md | perl -0777 -ne 'print "$1" if /.*## \[Unreleased\]\s+## \[(v?\d+.\d+.\d+)\].*/s')
           export BINVER=$(cat CMakeLists.txt | perl -0777 -ne 'print "v$1" if /.*project\s*\(.*\s*VERSION\s*(\d+.\d+.\d+).*\s*\)/s')
           export TODAY=`date +'%m/%d/%Y'`
           export NOTES=$(cat CHANGELOG.md | perl -0777 -ne 'print "$ENV{TODAY}\n\n$1\n" if /.*## \[$ENV{TAG}\]\s(.*?)\s+## \[(v\d+.\d+.\d+)\].*/s')

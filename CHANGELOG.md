@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add base64url decode implementaion
 ### Changed
 - Improve cmake files
+
 ## [v1.0] - 2016-02-15
 ### Added
 - Initial creation

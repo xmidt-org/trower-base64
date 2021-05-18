@@ -43,7 +43,11 @@ jobs:
           curl -s -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
           unzip -q -o build-wrapper-linux-x86.zip
 
+          export SONAR_VERSION="invalid"
+          env
+          curl -s https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/ |grep -o "sonar-scanner-cli-[0-9.]*-linux.zip"|sort -r|uniq|head -n 1
           export SONAR_VERSION=`curl -s https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/ |grep -o "sonar-scanner-cli-[0-9.]*-linux.zip"|sort -r|uniq|head -n 1`
+
           curl -s -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/$ENV{SONAR_VERSION}.sha256
           echo "  " >> $ENV{SONAR_VERSION}.sha256
           echo $ENV{SONAR_VERSION} >> $ENV{SONAR_VERSION}.sha256

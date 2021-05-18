@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.1.4]
+- Update the license to use SPDX
+- Update the build infrastructure
+
 ## [v1.1.3]
 - Added a more durable release artifact process.
 - Fixed a few code smells according to sonarcloud.io
@@ -42,7 +46,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial creation
 
-[Unreleased]: https://github.com/Comcast/trower-base64/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/Comcast/trower-base64/compare/v1.1.4...HEAD
+[v1.1.4]: https://github.com/Comcast/trower-base64/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/Comcast/trower-base64/compare/v1.1.2...v1.1.3
 [v1.1.2]: https://github.com/Comcast/trower-base64/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/Comcast/trower-base64/compare/v1.1...v1.1.1

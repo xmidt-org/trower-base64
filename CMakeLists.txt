@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-project(trower-base64 VERSION 1.1.3)
+project(trower-base64 VERSION 1.1.4)
 
 include(BitwiseVersion)
 include(CTest)

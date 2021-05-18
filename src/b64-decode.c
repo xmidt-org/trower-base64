@@ -1,3 +1,8 @@
+/* SPDX-FileCopyrightText: 2010-2021 Comcast Cable Communications Management, LLC */
+/* SPDX-License-Identifier: Apache-2.0 */
+/* SPDX-FileCopyrightText: 2001 Bob Trower, Trantor Standard Systems Inc. */
+/* SPDX-License-Identifier: MIT */
+
 /*********************************************************************\
 
 MODULE NAME:    b64.c

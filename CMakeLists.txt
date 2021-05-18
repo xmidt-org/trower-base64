@@ -1,31 +1,25 @@
-#   Copyright 2010-2016 Comcast Cable Communications Management, LLC
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
+# SPDX-FileCopyrightText: 2010-2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 
-project(trower-base64)
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.13)
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+
+project(trower-base64 VERSION 1.1.3)
+
+include(BitwiseVersion)
+include(CTest)
+include(LicenseLinterTarget)
+include(Coverage)
 
 add_definitions(-std=c99)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -Werror -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall")
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-set(CMAKE_MACOSX_RPATH 1)
-endif()
 
-include(CTest)
 
 add_subdirectory(src)
 if (BUILD_TESTING)
-  add_subdirectory(tests)
+    include(FindCunit)
+    add_subdirectory(tests)
 endif (BUILD_TESTING)

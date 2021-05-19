@@ -9,10 +9,10 @@
 #include "../src/base64.h"
 
 struct test_vector {
-    const char *in;
     size_t in_len;
-    const char *out;
+    const char *in;
     size_t out_len;
+    const char *out;
 };
 
 struct test_vector common_decoder_tests[] = {
@@ -35,7 +35,6 @@ struct test_vector common_decoder_tests[] = {
             .out_len = 0,
         },
 
-#if 0
         /* Every character must be valid */
         {   .in = "asdf1\xffjj",
             .in_len = 8,
@@ -47,7 +46,7 @@ struct test_vector common_decoder_tests[] = {
             .out = NULL,
             .out_len = 0,
         },
-#endif
+
         /* Protect against a bogus empty string */
         {   .in = "==",
             .in_len = 2,
@@ -55,7 +54,6 @@ struct test_vector common_decoder_tests[] = {
             .out_len = 0,
         },
 
-#if 0
         /* Invalid, safely fail. */
         {   .in = "b==",
             .in_len = 3,
@@ -115,17 +113,17 @@ struct test_vector common_decoder_tests[] = {
         {   .in = "as~d", .in_len = 4, .out = NULL, .out_len = 0, },
 
         /* Disallow other non-printable charcters. */
-        {   .in = "as\x00d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x01d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x02d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x03d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x04d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x05d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x06d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x07d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x08d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x09d=", .in_len = 4, .out = NULL, .out_len = 0, },
-        {   .in = "as\x0ad=", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x00p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x01p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x02p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x03p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x04p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x05p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x06p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x07p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x08p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x09p", .in_len = 4, .out = NULL, .out_len = 0, },
+        {   .in = "bs\x0ap", .in_len = 4, .out = NULL, .out_len = 0, },
 
         /* A remainder of 1 is never valid */
         {   .in = "TWFub",
@@ -133,7 +131,7 @@ struct test_vector common_decoder_tests[] = {
             .out = NULL,
             .out_len = 0,
         },
-#endif
+
         /* Simple valid examples */
         {   .in = "TWFu",
             .in_len = 4,
@@ -150,20 +148,6 @@ struct test_vector common_decoder_tests[] = {
             .out = "M",
             .out_len = 1,
         },
-
-#if 0
-        /* The padding '=' is optional for the URL variant. */
-        {   .in = "TWE",
-            .in_len = 3,
-            .out = "Ma",
-            .out_len = 2,
-        },
-        {   .in = "TQ",
-            .in_len = 2,
-            .out = "M",
-            .out_len = 1,
-        },
-#endif
 
         /* A longer sample text. */
         {   .in = "TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24s"
@@ -210,18 +194,39 @@ void test_decoded_size() {
 }
 
 void test_b64url_decoded_size() {
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(0), 0);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(1), 0);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(2), 1);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(3), 2);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(4), 3);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(8), 6);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(51), 38);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(52), 39);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(53), 0);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(54), 40);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(55), 41);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(56), 42);
+    struct test {
+        size_t expect;
+        size_t in;
+    } tests[] = {
+        {  0,  0 },   { 15, 20 },   { 29, 39 },   { 43, 58 },   {  0, 77 },
+        {  1,  2 },   {  0, 21 },   { 30, 40 },   { 44, 59 },   { 58, 78 },
+        {  2,  3 },   { 16, 22 },   {  0, 41 },   { 45, 60 },   { 59, 79 },
+        {  3,  4 },   { 17, 23 },   { 31, 42 },   {  0, 61 },   { 60, 80 },
+        {  4,  6 },   { 18, 24 },   { 32, 43 },   { 46, 62 },   {  0, 81 },
+        {  0,  5 },   {  0, 25 },   { 33, 44 },   { 47, 63 },   { 61, 82 },
+        {  5,  7 },   { 19, 26 },   {  0, 45 },   { 48, 64 },   { 62, 83 },
+        {  6,  8 },   { 20, 27 },   { 34, 46 },   {  0, 65 },   { 63, 84 },
+        {  0,  9 },   { 21, 28 },   { 35, 47 },   { 49, 66 },   {  0, 85 },
+        {  7, 10 },   {  0, 29 },   { 36, 48 },   { 50, 67 },   { 64, 86 },
+        {  8, 11 },   { 22, 30 },   {  0, 49 },   { 51, 68 },   { 65, 87 },
+        {  9, 12 },   { 23, 31 },   { 37, 50 },   {  0, 69 },   { 66, 88 },
+        {  0, 13 },   { 24, 32 },   { 38, 51 },   { 52, 70 },   {  0, 89 },
+        { 10, 14 },   {  0, 33 },   { 39, 52 },   { 53, 71 },   { 67, 90 },
+        { 11, 15 },   { 25, 34 },   {  0, 53 },   { 54, 72 },
+        { 12, 16 },   { 26, 35 },   { 40, 54 },   {  0, 73 },
+        {  0, 17 },   { 27, 36 },   { 41, 55 },   { 55, 74 },
+        { 13, 18 },   {  0, 37 },   { 42, 56 },   { 56, 75 },
+        { 14, 19 },   { 28, 38 },   {  0, 57 },   { 57, 76 },
+    };
+
+    for( size_t i = 0; i < sizeof(tests)/sizeof(struct test); i++ ) {
+        size_t rv = b64url_get_decoded_buffer_size( tests[i].in );
+
+        if( rv != tests[i].expect ) {
+            printf( "Expected: %zd, got: %zd\n", tests[i].expect, rv );
+        }
+        CU_ASSERT( rv == tests[i].expect );
+    }
 }
 
 void test_encode() {
@@ -249,7 +254,7 @@ void test_encoded_stuff( const char *raw, size_t raw_size, const char *expected,
     size_t i;
 
     size_t workspace_size = b64_get_encoded_buffer_size(raw_size);
-    uint8_t *workspace = malloc(workspace_size);
+    uint8_t *workspace = calloc(1, workspace_size);
     uint8_t *tmp = dup( raw, raw_size );
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
@@ -261,7 +266,7 @@ void test_encoded_stuff( const char *raw, size_t raw_size, const char *expected,
     for( i = 0; i < expected_size; i++ ) {
         CU_ASSERT_EQUAL(workspace[i], (uint8_t) expected[i]);
         if( workspace[i] != (uint8_t) expected[i] ) {
-            printf("Expected[%zd:%c] %*s ::Actual[%zd:%c] %*s\n",
+            printf("Encoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
                     i, expected[i], (int) expected_size, expected,
                     i, workspace[i], (int) workspace_size, workspace);
         }
@@ -271,51 +276,101 @@ void test_encoded_stuff( const char *raw, size_t raw_size, const char *expected,
 
 void test_decode() {
     struct test_vector *t = common_decoder_tests;
+    struct test_vector local[] = {
+        /* len, input         len, expected */
+        {  12, "bGVhc3VyZS4=", 8, "leasure."     },
+        {  12, "ZWFzdXJlLg==", 7, "easure."      },
+        {  8,  "YXN1cmUu",     6, "asure."       },
+        {  8,  "c3VyZS4=",     5, "sure."        },
+        {  4,  "+/+/",         3, "\xfb\xff\xbf" },
+        {  1,  "Y",            0, NULL           },
+        {  2,  "==",           0, NULL           },
+        {  3,  "b==",          0, NULL           },
+        {  5,  "bad4=",        0, NULL           },
+        {  6,  "bad4==",       0, NULL           },
+        {  5,  "bad==",        0, NULL           },
+        {  3,  "ba=",          0, NULL           },
+        {  8,  "YXN=cmUu",     0, NULL           },
+        {  8,  "YXN\xffmcUu",  0, NULL           },
+
+        /* Use every character to ensure they all map properly */
+        {   .in = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                  "abcdefghijklmnopqrstuvwxyz"
+                  "0123456789+/",
+            .in_len = 64,
+            .out = "\x00\x10\x83\x10\x51\x87\x20\x92\x8b\x30"
+                   "\xd3\x8f\x41\x14\x93\x51\x55\x97\x61\x96"
+                   "\x9b\x71\xd7\x9f\x82\x18\xa3\x92\x59\xa7"
+                   "\xa2\x9a\xab\xb2\xdb\xaf\xc3\x1c\xb3\xd3"
+                   "\x5d\xb7\xe3\x9e\xbb\xf3\xdf\xbf",
+            .out_len = 48,
+        },
+    };
+    uint8_t fake_buf;
 
     for( size_t i = 0; i < sizeof(common_decoder_tests)/sizeof(struct test_vector); i++ ) {
         test_decoded_stuff( b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
     }
 
-    test_decoded_stuff( b64_decode, "bGVhc3VyZS4=", 12, "leasure.",     8 );
-    test_decoded_stuff( b64_decode, "ZWFzdXJlLg==", 12, "easure.",      7 );
-    test_decoded_stuff( b64_decode, "YXN1cmUu",      8, "asure.",       6 );
-    test_decoded_stuff( b64_decode, "c3VyZS4=",      8, "sure.",        5 );
-    test_decoded_stuff( b64_decode, "+/+/",          4, "\xfb\xff\xbf", 3 );
-    test_decoded_stuff( b64_decode, "Y",             1, NULL,           0 );
-    test_decoded_stuff( b64_decode, "==",            2, NULL,           0 );
-    test_decoded_stuff( b64_decode, "b==",           3, NULL,           0 );
+    t = local;
+    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
+        test_decoded_stuff( b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    }
 
-    //test_decoded_stuff( b64_decode, "bad4=",         5, NULL,           0 );
-    //test_decoded_stuff( b64_decode, "bad4==",        6, NULL,           0 );
-    //test_decoded_stuff( b64_decode, "bad==",         5, NULL,           0 );
-    //test_decoded_stuff( b64_decode, "ba=",           3, NULL,           0 );
-    //test_decoded_stuff( b64_decode, "YXN=cmUu",      8, NULL,           0 );
-    //test_decoded_stuff( b64_decode, "YXN\xffmcUu",   8, NULL,           0 );
+    CU_ASSERT( 0 == b64_decode(NULL, 8, &fake_buf) );
+    CU_ASSERT( 0 == b64_decode(&fake_buf, 0, &fake_buf) );
+    CU_ASSERT( 0 == b64_decode(&fake_buf, 8, NULL) );
 }
 
 void test_url_decode() {
     struct test_vector *t = common_decoder_tests;
+    struct test_vector local[] = {
+        /* len, input       len, expected */
+        {  3, "TWE",          2, "Ma"           },
+        {  2, "TQ",           1, "M"            },
+        { 11, "bGVhc3VyZS4",  8, "leasure."     },
+        { 10, "ZWFzdXJlLg",   7, "easure."      },
+        {  8, "YXN1cmUu",     6, "asure."       },
+        {  7, "c3VyZS4",      5, "sure."        },
+        {  4, "-_-_",         3, "\xfb\xff\xbf" },
+        {  1, "Y",            0, NULL           },
+        {  2, "==",           0, NULL           },
+        {  3, "b==",          0, NULL           },
+        { 12, "ZWFzdXJlLg==", 7, "easure."      },
+        {  5, "bad4=",        0, NULL           },
+        {  6, "bad4==",       0, NULL           },
+        {  5, "bad==",        0, NULL           },
+        {  3, "ba=",          0, NULL           },
+        {  8, "YXN=cmUu",     0, NULL           },
+        {  8, "YXN\xffmcUu",  0, NULL           },
+
+        /* Use every character to ensure they all map properly */
+        {   .in = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                  "abcdefghijklmnopqrstuvwxyz"
+                  "0123456789-_",
+            .in_len = 64,
+            .out = "\x00\x10\x83\x10\x51\x87\x20\x92\x8b\x30"
+                   "\xd3\x8f\x41\x14\x93\x51\x55\x97\x61\x96"
+                   "\x9b\x71\xd7\x9f\x82\x18\xa3\x92\x59\xa7"
+                   "\xa2\x9a\xab\xb2\xdb\xaf\xc3\x1c\xb3\xd3"
+                   "\x5d\xb7\xe3\x9e\xbb\xf3\xdf\xbf",
+            .out_len = 48,
+        },
+    };
+    uint8_t fake_buf;
 
     for( size_t i = 0; i < sizeof(common_decoder_tests)/sizeof(struct test_vector); i++ ) {
         test_decoded_stuff( b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
     }
 
-    test_decoded_stuff( b64url_decode, "bGVhc3VyZS4",  11, "leasure.",     8 );
-    test_decoded_stuff( b64url_decode, "ZWFzdXJlLg",   10, "easure.",      7 );
-    test_decoded_stuff( b64url_decode, "YXN1cmUu",      8, "asure.",       6 );
-    test_decoded_stuff( b64url_decode, "c3VyZS4",       7, "sure.",        5 );
-    test_decoded_stuff( b64url_decode, "-_-_",          4, "\xfb\xff\xbf", 3 );
-    test_decoded_stuff( b64url_decode, "Y",             1, NULL,           0 );
-    test_decoded_stuff( b64url_decode, "==",            2, NULL,           0 );
-    test_decoded_stuff( b64url_decode, "b==",           3, NULL,           0 );
-    test_decoded_stuff( b64url_decode, "ZWFzdXJlLg==", 12, "easure.",      7 );
+    t = local;
+    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
+        test_decoded_stuff( b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    }
 
-    //test_decoded_stuff( b64url_decode, "bad4=",         5, NULL,           0 );
-    //test_decoded_stuff( b64url_decode, "bad4==",        6, NULL,           0 );
-    //test_decoded_stuff( b64url_decode, "bad==",         5, NULL,           0 );
-    //test_decoded_stuff( b64url_decode, "ba=",           3, NULL,           0 );
-    //test_decoded_stuff( b64url_decode, "YXN=cmUu",      8, NULL,           0 );
-    //test_decoded_stuff( b64url_decode, "YXN\xffmcUu",   8, NULL,           0 );
+    CU_ASSERT( 0 == b64url_decode(NULL, 8, &fake_buf) );
+    CU_ASSERT( 0 == b64url_decode(&fake_buf, 0, &fake_buf) );
+    CU_ASSERT( 0 == b64url_decode(&fake_buf, 8, NULL) );
 }
 
 void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
@@ -325,7 +380,7 @@ void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
 
     size_t workspace_size = (b64_decode == fn) ? b64_get_decoded_buffer_size(raw_size) :
                                                  b64url_get_decoded_buffer_size(raw_size);
-    uint8_t *workspace = malloc(workspace_size);
+    uint8_t *workspace = calloc(1, workspace_size);
     uint8_t *tmp = dup( raw, raw_size );
     size_t num_chars;
 
@@ -344,9 +399,9 @@ void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
     for( i = 0; i < expected_size; i++ ) {
         CU_ASSERT_EQUAL(workspace[i], (uint8_t) expected[i]);
         if( workspace[i] != (uint8_t) expected[i] ) {
-            printf("Expected[%d:%c] %*s ::Actual[%d:%c] %*s\n",
-                    (int)i, expected[i], (int)expected_size, expected,
-                    (int)i, workspace[i], (int)num_chars, workspace);
+            printf("Decoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
+                    i, expected[i], (int)expected_size, expected,
+                    i, workspace[i], (int)num_chars, workspace);
         }
     }
     free(workspace);
@@ -355,12 +410,12 @@ void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
 void add_suites( CU_pSuite *suite )
 {
     *suite = CU_add_suite( "Base64 encoding tests", NULL, NULL );
-    CU_add_test( *suite, "Get the Encoded Size     ", test_encoded_size );
-    CU_add_test( *suite, "Get the Decoded Size     ", test_decoded_size );
-    CU_add_test( *suite, "Get the base64url Decoded Size", test_b64url_decoded_size );
-    CU_add_test( *suite, "Get the Encode           ", test_encode );
-    CU_add_test( *suite, "Get the Decode           ", test_decode );
-    CU_add_test( *suite, "Get the URL Decode       ", test_url_decode );
+    CU_add_test( *suite, "Test the Encoded Size     ", test_encoded_size );
+    CU_add_test( *suite, "Test the Decoded Size     ", test_decoded_size );
+    CU_add_test( *suite, "Test the url Decoded Size ", test_b64url_decoded_size );
+    CU_add_test( *suite, "Test Encoding             ", test_encode );
+    CU_add_test( *suite, "Test Decoding             ", test_decode );
+    CU_add_test( *suite, "Test URL Decoding         ", test_url_decode );
 }
 
 /*----------------------------------------------------------------------------*/

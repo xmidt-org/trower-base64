@@ -479,9 +479,18 @@ void test_decode_w_alloc_helper( uint8_t* (fn)(const uint8_t*, size_t, size_t*) 
     free( rv );
 
     CU_ASSERT( NULL == fn( (uint8_t*) in, 4, NULL ) );
+
+    len = 99;
     CU_ASSERT( NULL == fn( (uint8_t*) in, 0, &len ) );
+    CU_ASSERT( 0 == len );
+
+    len = 99;
     CU_ASSERT( NULL == fn( NULL, 4, &len ) );
+    CU_ASSERT( 0 == len );
+
+    len = 99;
     CU_ASSERT( NULL == fn( (uint8_t*) bad, 4, &len ) );
+    CU_ASSERT( 0 == len );
 }
 
 void test_encode_w_alloc_helper( char* (fn)(const uint8_t*, size_t, size_t*) )
@@ -505,8 +514,13 @@ void test_encode_w_alloc_helper( char* (fn)(const uint8_t*, size_t, size_t*) )
     CU_ASSERT_FATAL( NULL != rv );
     free( rv );
 
+    len = 99;
     CU_ASSERT( NULL == fn( (uint8_t*) in, 0, &len ) );
+    CU_ASSERT( 0 == len );
+
+    len = 99;
     CU_ASSERT( NULL == fn( NULL, 3, &len ) );
+    CU_ASSERT( 0 == len );
 }
 
 

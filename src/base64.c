@@ -273,6 +273,9 @@ static uint8_t* decode_w_alloc( size_t (size_fn)(const size_t),
     size_t raw_len = size_fn( len );
     uint8_t *buf = NULL;
 
+    if( out_len ) {
+        *out_len = 0;
+    }
     if( !raw_len || !enc || !out_len ) {
         return NULL;
     }
@@ -295,6 +298,10 @@ static char* encode_w_alloc( size_t (size_fn)(const size_t),
 {
     size_t enc_len = size_fn( len );
     char *buf = NULL;
+
+    if( out_len ) {
+        *out_len = 0;
+    }
 
     if( !enc_len || !raw ) {
         return NULL;

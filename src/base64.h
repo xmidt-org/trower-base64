@@ -14,6 +14,8 @@ extern "C" {
 /**
  *  Get the size of the buffer required to hold the decoded data when encoded.
  *
+ *  @note: The size returned does not account for any trailing '\0'.
+ *
  *  @param decoded_size size of the decoded date
  *
  *  @return size of the buffer required to hold the encoded data
@@ -22,9 +24,10 @@ size_t b64_get_encoded_buffer_size( const size_t decoded_size );
 
 /**
  *
- *  Get the size of the buffer required to hold the decoded data when base64 url encoded.
+ *  Get the size of the buffer required to hold the decoded data when base64
+ *  url encoded.
  *
- *  @note : Not supported 
+ *  @note: The size returned does not account for any trailing '\0'.
  *
  *  @param decoded_size size of the decoded date
  *
@@ -82,7 +85,8 @@ size_t b64url_get_decoded_buffer_size( const size_t encoded_size );
  * @param input_size size of the raw data
  * @param output pointer to where the decoded data should be placed
  *
- * @return total number of bytes in the decoded array
+ * @return total number of bytes in the decoded array, or 0 if there was a
+ *         decoding error
  */
 size_t b64_decode( const uint8_t *input, const size_t input_size, uint8_t *output );
 
@@ -100,7 +104,8 @@ size_t b64_decode( const uint8_t *input, const size_t input_size, uint8_t *outpu
  * @param input_size size of the raw data
  * @param output pointer to where the decoded data should be placed
  *
- * @return total number of bytes in the decoded array
+ * @return total number of bytes in the decoded array, or 0 if there was a
+ *         decoding error
  */
 size_t b64url_decode( const uint8_t *input, const size_t input_size, uint8_t *output );
 

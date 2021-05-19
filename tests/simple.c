@@ -218,7 +218,7 @@ void test_b64url_decoded_size() {
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(8), 6);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(51), 38);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(52), 39);
-    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(53), 39);
+    CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(53), 0);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(54), 40);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(55), 41);
     CU_ASSERT_EQUAL(b64url_get_decoded_buffer_size(56), 42);
@@ -323,7 +323,8 @@ void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
 {
     size_t i;
 
-    size_t workspace_size = b64_get_decoded_buffer_size(raw_size);
+    size_t workspace_size = (b64_decode == fn) ? b64_get_decoded_buffer_size(raw_size) :
+                                                 b64url_get_decoded_buffer_size(raw_size);
     uint8_t *workspace = malloc(workspace_size);
     uint8_t *tmp = dup( raw, raw_size );
     size_t num_chars;

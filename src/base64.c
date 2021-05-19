@@ -1,9 +1,9 @@
 /* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <stdint.h>
-#include <stdio.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
@@ -25,6 +25,12 @@
 /*----------------------------------------------------------------------------*/
 static void encode( const char *map, const uint8_t *in, size_t len, uint8_t *out );
 static size_t decode( const int8_t *map, const uint8_t *in, size_t len, uint8_t *out );
+static uint8_t* decode_w_alloc( size_t (size_fn)(const size_t),
+                                size_t (decode_fn)(const uint8_t*, const size_t, uint8_t*),
+                                const uint8_t *enc, size_t len, size_t *out_len );
+static char* encode_w_alloc( size_t (size_fn)(const size_t),
+                             void (encode_fn)(const uint8_t*, const size_t, uint8_t*),
+                             const uint8_t *enc, size_t len, size_t *out_len );
 
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
@@ -80,15 +86,23 @@ size_t b64url_get_decoded_buffer_size( const size_t encoded_size )
 }
 
 
-void b64_encode( const uint8_t *in, const size_t len, uint8_t *out )
+void b64_encode( const uint8_t *raw, const size_t len, uint8_t *out )
 {
     static const char map[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-    encode( map, in, len, out );
+    encode( map, raw, len, out );
 }
 
 
-size_t b64_decode( const uint8_t *in, const size_t len, uint8_t *out )
+void b64url_encode( const uint8_t *raw, const size_t len, uint8_t *out )
+{
+    static const char map[65] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_\0";
+
+    encode( map, raw, len, out );
+}
+
+
+size_t b64_decode( const uint8_t *enc, const size_t len, uint8_t *out )
 {
     // -1 = invalid
     // -2 = padding
@@ -112,15 +126,15 @@ size_t b64_decode( const uint8_t *in, const size_t len, uint8_t *out )
     };
     size_t max = b64_get_decoded_buffer_size( len );
 
-    if( (0 == max) || !in || !out ) {
+    if( (0 == max) || !enc || !out ) {
         return 0;
     }
 
-    return decode( map, in, len, out );
+    return decode( map, enc, len, out );
 }
 
 
-size_t b64url_decode( const uint8_t *in, const size_t len, uint8_t *out )
+size_t b64url_decode( const uint8_t *enc, const size_t len, uint8_t *out )
 {
     // -1 = invalid
     // -2 = padding
@@ -144,12 +158,37 @@ size_t b64url_decode( const uint8_t *in, const size_t len, uint8_t *out )
     };
     size_t max = b64url_get_decoded_buffer_size( len );
 
-    if( (0 == max) || !in || !out ) {
+    if( (0 == max) || !enc || !out ) {
         return 0;
     }
 
-    return decode( map, in, len, out );
+    return decode( map, enc, len, out );
 }
+
+
+uint8_t* b64_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_len )
+{
+    return decode_w_alloc( b64_get_decoded_buffer_size, b64_decode, enc, len, out_len );
+}
+
+
+char* b64_encode_with_alloc( const uint8_t *raw, size_t len, size_t *out_len )
+{
+    return encode_w_alloc( b64_get_encoded_buffer_size, b64_encode, raw, len, out_len );
+}
+
+
+uint8_t* b64url_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_len )
+{
+    return decode_w_alloc( b64url_get_decoded_buffer_size, b64url_decode, enc, len, out_len );
+}
+
+
+char* b64url_encode_with_alloc( const uint8_t *raw, size_t len, size_t *out_len )
+{
+    return encode_w_alloc( b64url_get_encoded_buffer_size, b64url_encode, raw, len, out_len );
+}
+
 
 /*----------------------------------------------------------------------------*/
 /*                             Internal functions                             */
@@ -179,7 +218,7 @@ static void encode( const char *map, const uint8_t *in, size_t len, uint8_t *out
     }
 
     /* Pad */
-    while( 0x03 & j ) {
+    while( ('\0' != map[64]) && (0x03 & j) ) {
         out[j++] = (uint8_t) map[64];
     }
 }
@@ -225,4 +264,50 @@ static size_t decode( const int8_t *map, const uint8_t *in, size_t len, uint8_t 
     }
 
     return j;
+}
+
+static uint8_t* decode_w_alloc( size_t (size_fn)(const size_t),
+                                size_t (decode_fn)(const uint8_t*, const size_t, uint8_t*),
+                                const uint8_t *enc, size_t len, size_t *out_len )
+{
+    size_t raw_len = size_fn( len );
+    uint8_t *buf = NULL;
+
+    if( !raw_len || !enc || !out_len ) {
+        return NULL;
+    }
+
+    buf = malloc( raw_len * sizeof(uint8_t) );
+    if( buf ) {
+        *out_len = decode_fn( enc, len, buf );
+        if( 0 == *out_len ) {
+            free( buf );
+            buf = NULL;
+        }
+    }
+
+    return buf;
+}
+
+static char* encode_w_alloc( size_t (size_fn)(const size_t),
+                             void (encode_fn)(const uint8_t*, const size_t, uint8_t*),
+                             const uint8_t *raw, size_t len, size_t *out_len )
+{
+    size_t enc_len = size_fn( len );
+    char *buf = NULL;
+
+    if( !enc_len || !raw ) {
+        return NULL;
+    }
+
+    buf = malloc( (enc_len + 1) * sizeof(char) );
+    if( buf ) {
+        encode_fn( raw, len, (uint8_t*) buf );
+        buf[enc_len] = '\0';
+        if( out_len ) {
+            *out_len = enc_len;
+        }
+    }
+
+    return buf;
 }

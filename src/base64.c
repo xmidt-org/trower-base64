@@ -165,8 +165,8 @@ static void encode( const char *map, const uint8_t *in, size_t len, uint8_t *out
         bit_count += 8;
 
         while( 6 <= bit_count ) {
-            out[j++] = (uint8_t) map[ (0x3f & (bits >> (bit_count - 6))) ];
             bit_count -= 6;
+            out[j++] = (uint8_t) map[ 0x3f & (bits >> bit_count) ];
         }
     }
 
@@ -174,7 +174,8 @@ static void encode( const char *map, const uint8_t *in, size_t len, uint8_t *out
     if( bit_count ) {
         bits <<= 8;
         bit_count += 8;
-        out[j++] = (uint8_t) map[ (0x3f & (bits >> (bit_count - 6))) ];
+        bit_count -= 6;
+        out[j++] = (uint8_t) map[ 0x3f & (bits >> bit_count) ];
     }
 
     /* Pad */

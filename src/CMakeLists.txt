@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2016-2021 Comcast Cable Communications Management, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(trower-base64 SHARED b64.c b64-decode.c)
+add_library(trower-base64 SHARED base64.c)
 
 configure_file(ver.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/ver.h)

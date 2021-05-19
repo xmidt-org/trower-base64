@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.1.5]
+- Rewrite the core handling to fix a number of defects found in 1.1.4.
+- Improve the tests to better prove the library completely works.
+
 ## [v1.1.4]
 - Update the license to use SPDX
 - Update the build infrastructure
@@ -47,10 +51,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial creation
 
-[Unreleased]: https://github.com/Comcast/trower-base64/compare/v1.1.4...HEAD
-[v1.1.4]: https://github.com/Comcast/trower-base64/compare/v1.1.3...v1.1.4
-[v1.1.3]: https://github.com/Comcast/trower-base64/compare/v1.1.2...v1.1.3
-[v1.1.2]: https://github.com/Comcast/trower-base64/compare/v1.1.1...v1.1.2
-[v1.1.1]: https://github.com/Comcast/trower-base64/compare/v1.1...v1.1.1
-[v1.1]: https://github.com/Comcast/trower-base64/compare/v1.0...v1.1
-[v1.0]: https://github.com/Comcast/trower-base64/compare/3e997140737790d284de03a5ef6f497798673750...v1.0
+[Unreleased]: https://github.com/xmidt-org/trower-base64/compare/v1.1.5...HEAD
+[v1.1.5]: https://github.com/xmidt-org/trower-base64/compare/v1.1.4...v1.1.5
+[v1.1.4]: https://github.com/xmidt-org/trower-base64/compare/v1.1.3...v1.1.4
+[v1.1.3]: https://github.com/xmidt-org/trower-base64/compare/v1.1.2...v1.1.3
+[v1.1.2]: https://github.com/xmidt-org/trower-base64/compare/v1.1.1...v1.1.2
+[v1.1.1]: https://github.com/xmidt-org/trower-base64/compare/v1.1...v1.1.1
+[v1.1]: https://github.com/xmidt-org/trower-base64/compare/v1.0...v1.1
+[v1.0]: https://github.com/xmidt-org/trower-base64/compare/3e997140737790d284de03a5ef6f497798673750...v1.0

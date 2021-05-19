@@ -13,10 +13,10 @@ C implementation of base64 encode/decode.
 [![Language Grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/xmidt-org/trower-base64.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xmidt-org/trower-base64/context:cpp)
 [![GitHub release](https://img.shields.io/github/release/xmidt-org/trower-base64.svg)](CHANGELOG.md)
 
-This is a fork of the implementation Bob Trower produced and released in 2001.
-You can find the original here: http://base64.sourceforge.net/
+This started as a fork of the implementation Bob Trower produced and released in
+2001.  You can find the original here: http://base64.sourceforge.net/
 
-# Why fork?
+## Why fork?
 
 As we started using the library we found it was hugely handy, but had a few bugs
 and not as many tests as we wanted.  As the upstream project seems to have lost

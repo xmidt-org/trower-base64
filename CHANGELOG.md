@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.2.0]
+- Add a few helper functions to allocate buffers and fill them.
+- Add a `b64_encode()` function.
+
 ## [v1.1.5]
 - Rewrite the core handling to fix a number of defects found in 1.1.4.
 - Improve the tests to better prove the library completely works.
@@ -51,7 +55,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Initial creation
 
-[Unreleased]: https://github.com/xmidt-org/trower-base64/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/xmidt-org/trower-base64/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/xmidt-org/trower-base64/compare/v1.1.5...v1.2.0
 [v1.1.5]: https://github.com/xmidt-org/trower-base64/compare/v1.1.4...v1.1.5
 [v1.1.4]: https://github.com/xmidt-org/trower-base64/compare/v1.1.3...v1.1.4
 [v1.1.3]: https://github.com/xmidt-org/trower-base64/compare/v1.1.2...v1.1.3

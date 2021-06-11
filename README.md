@@ -8,7 +8,7 @@ C implementation of base64 encode/decode.
 
 [![Build Status](https://github.com/xmidt-org/trower-base64/workflows/CI/badge.svg)](https://github.com/xmidt-org/trower-base64/actions)
 [![codecov.io](http://codecov.io/github/xmidt-org/trower-base64/coverage.svg?branch=master)](http://codecov.io/github/xmidt-org/trower-base64?branch=master)
-[![coverity](https://img.shields.io/coverity/scan/17585.svg)](https://scan.coverity.com/projects/trower-base64)
+[![coverity](https://img.shields.io/coverity/scan/23253.svg)](https://scan.coverity.com/projects/xmidt-org-trower-base64)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xmidt-org_trower-base64&metric=alert_status)](https://sonarcloud.io/dashboard?id=xmidt-org_trower-base64)
 [![Language Grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/xmidt-org/trower-base64.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xmidt-org/trower-base64/context:cpp)
 [![GitHub release](https://img.shields.io/github/release/xmidt-org/trower-base64.svg)](CHANGELOG.md)

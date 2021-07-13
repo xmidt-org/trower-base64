@@ -64,7 +64,7 @@ jobs:
       - name: Coverity Analysis
         working-directory: build
         run: |
-          ./coverity/bin/cov-build --dir cov-int ninja libtrower-base-base64.a
+          ./coverity/bin/cov-build --dir cov-int ninja libtrower-base64.a
 
       - name: Archive Results
         working-directory: build

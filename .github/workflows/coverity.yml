@@ -47,7 +47,6 @@ jobs:
           ../.github/scripts/get_coverity.sh $COVERITY_SECRET $GITHUB_REPOSITORY
 
       - name: Meson Build
-        working-directory: build
         run: |
           meson build
 

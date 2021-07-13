@@ -46,7 +46,7 @@ ver_h = configure_file(input:  'src/ver.h.in',
 
 inc = include_directories('src')
 
-install_headers(['src/base64.h', ver_h])
+install_headers(['src/base64.h', ver_h], subdir: meson.project_name())
 
 the_sources = ['src/base64.c']
 

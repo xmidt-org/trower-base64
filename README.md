@@ -25,10 +25,8 @@ steam, we decided to fork, improve, release and ship.
 # Building and Testing Instructions
 
 ```
-mkdir build
+meson build
 cd build
-cmake ..
-make
-make test
-make coverage
-firefox index.html
+ninja all test coverage
+firefox meson-logs/coveragereport/index.html
+```

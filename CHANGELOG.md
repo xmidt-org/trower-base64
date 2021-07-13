@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.2.1]
+- Move to use meson for building.
+- Remove cmake.
+
 ## [v1.2.0]
 - Add a few helper functions to allocate buffers and fill them.
 - Add a `b64_encode()` function.

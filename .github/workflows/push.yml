@@ -65,7 +65,8 @@ jobs:
       - name: Merge GCOV Reports for Sonarcloud
         working-directory: build
         run: |
-          ninja coverage-xml
+          #ninja coverage-sonarqube ## for now this isn't supported
+          gcovr --sonarqube coverage.xml -r ..
 
       - name: Upload SonarCloud
         run: |

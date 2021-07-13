@@ -85,7 +85,7 @@ add_test_setup('valgrind',
 # Add the license check target
 ################################################################################
 
-reuse_bin = find_program('reuse')
+reuse_bin = find_program('reuse', required: false)
 if reuse_bin.found()
   custom_target('license',
                 command: [reuse_bin, 'lint'],

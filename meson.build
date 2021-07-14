@@ -15,6 +15,12 @@ warning_level = 3   # -Wall
 werror = true
 
 ################################################################################
+# Common variable definitions
+################################################################################
+
+inc_base = 'include/'+meson.project_name()
+
+################################################################################
 # Generate the version values
 ################################################################################
 
@@ -37,7 +43,7 @@ cfg.set( meson.project_name()+'_VERSION_MINOR', minor)
 cfg.set( meson.project_name()+'_VERSION_PATCH', patch)
 cfg.set( meson.project_name()+'_BITWISE_VERSION', bitwise)
 
-ver_h = configure_file(input:  'src/ver.h.in',
+ver_h = configure_file(input:  inc_base+'/ver.h.in',
                        output: 'ver.h',
                        configuration: cfg)
 
@@ -45,14 +51,14 @@ ver_h = configure_file(input:  'src/ver.h.in',
 # Define the libraries
 ################################################################################
 
-inc = include_directories('src')
+inc = include_directories(inc_base)
 
-install_headers(['src/base64.h', ver_h], subdir: meson.project_name())
+install_headers([inc_base+'/base64.h', ver_h], subdir: meson.project_name())
 
-the_sources = ['src/base64.c']
+sources = ['src/base64.c']
 
 libtrower = library(meson.project_name(),
-                    the_sources,
+                    sources,
                     include_directories: inc,
                     install: true)
 
@@ -61,17 +67,17 @@ libtrower = library(meson.project_name(),
 ################################################################################
 
 if not meson.is_subproject()
-test_args = ['-fprofile-arcs', '-ftest-coverage', '-O0']
+  test_args = ['-fprofile-arcs', '-ftest-coverage', '-O0']
 
-cunit_dep = dependency('cunit')
+  cunit_dep = dependency('cunit')
 
-test('simple test',
-     executable('simple', ['tests/simple.c'],
-                include_directories: inc,
-                dependencies: cunit_dep,
-                install: false,
-                link_args: test_args,
-                link_with: libtrower))
+  test('simple test',
+       executable('simple', ['tests/simple.c'],
+                  include_directories: inc,
+                  dependencies: cunit_dep,
+                  install: false,
+                  link_args: test_args,
+                  link_with: libtrower))
 endif
 
 ################################################################################

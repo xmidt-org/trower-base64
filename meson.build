@@ -5,6 +5,7 @@
 
 project('trower-base64', 'c',
         version: '1.2.1',
+        meson_version: '>=0.55.0',
         license: ['Apache-2.0'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
@@ -50,15 +51,16 @@ install_headers(['src/base64.h', ver_h], subdir: meson.project_name())
 
 the_sources = ['src/base64.c']
 
-the_libs = both_libraries(meson.project_name(),
-                          the_sources,
-                          include_directories: inc,
-                          install: true)
+libtrower = library(meson.project_name(),
+                    the_sources,
+                    include_directories: inc,
+                    install: true)
 
 ################################################################################
 # Define the tests
 ################################################################################
 
+if not meson.is_subproject()
 test_args = ['-fprofile-arcs', '-ftest-coverage', '-O0']
 
 cunit_dep = dependency('cunit')
@@ -67,19 +69,10 @@ test('simple test',
      executable('simple', ['tests/simple.c'],
                 include_directories: inc,
                 dependencies: cunit_dep,
+                install: false,
                 link_args: test_args,
-                link_with: the_libs))
-
-################################################################################
-# Configure valgrind
-################################################################################
-
-add_test_setup('valgrind',
-               is_default: true,
-               exe_wrapper: [ 'valgrind',
-                              '--leak-check=full',
-                              '--error-exitcode=1' ],
-               timeout_multiplier: 2)
+                link_with: libtrower))
+endif
 
 ################################################################################
 # Add the license check target
@@ -93,3 +86,7 @@ if reuse_bin.found()
                 output: ['license'])
 endif
 
+libtrower_dep = declare_dependency(include_directories: inc,
+                                   link_with: libtrower)
+
+meson.override_dependency(meson.project_name(), libtrower_dep)

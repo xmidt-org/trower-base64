@@ -92,7 +92,7 @@ if reuse_bin.found()
                 output: ['license'])
 endif
 
-libtrower_dep = declare_dependency(include_directories: inc,
+libtrower_dep = declare_dependency(include_directories: ['include'],
                                    link_with: libtrower)
 
 meson.override_dependency(meson.project_name(), libtrower_dep)

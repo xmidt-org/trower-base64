@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 project('trower-base64', 'c',
-        version: '1.2.2',
+        version: '1.2.3',
         meson_version: '>=0.55.0',
         license: ['Apache-2.0'],
         default_options: ['c_std=c99',

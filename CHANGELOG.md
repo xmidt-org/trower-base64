@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.2.3]
+- Fix the include path so it works automatically.
+
 ## [v1.2.2]
 - Improve include structure for meson.
 

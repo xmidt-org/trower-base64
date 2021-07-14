@@ -6,7 +6,7 @@
 #include <string.h>
 #include <CUnit/Basic.h>
 
-#include "../src/base64.h"
+#include "../include/trower-base64/base64.h"
 
 struct test_vector {
     size_t in_len;

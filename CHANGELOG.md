@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.2.4]
+- Add a meson wrap file to the release objects.
+- Improve the meson build so normally tests are run with valgrind but if this is
+  a subproject then valgrind and the tests are disabled.
+
 ## [v1.2.3]
 - Fix the include path so it works automatically.
 

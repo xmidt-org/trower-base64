@@ -5,14 +5,15 @@
 
 project('trower-base64', 'c',
         version: '1.2.3',
-        meson_version: '>=0.55.0',
         license: ['Apache-2.0'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
 
-# We want strict flags
-warning_level = 3   # -Wall
-werror = true
+if not meson.is_subproject()
+  # We want strict flags
+  warning_level = 3   # -Wall
+  werror = true
+endif
 
 ################################################################################
 # Common variable definitions
@@ -21,31 +22,10 @@ werror = true
 inc_base = 'include/'+meson.project_name()
 
 ################################################################################
-# Generate the version values
+# Generate the version header file
 ################################################################################
 
-version = meson.project_version()
-version_arr = version.split('.')
-major = version_arr[0].to_int()
-minor = version_arr[1].to_int()
-patch = version_arr[2].to_int()
-
-hex = '0123456789abcdef'
-ver = '0x@0@@1@@2@@3@@4@@5@'
-bitwise = ver.format(hex[major / 16], hex[major % 16],
-                     hex[minor / 16], hex[minor % 16],
-                     hex[patch / 16], hex[patch % 16])
-
-cfg = configuration_data()
-cfg.set( meson.project_name()+'_VERSION', version)
-cfg.set( meson.project_name()+'_VERSION_MAJOR', major)
-cfg.set( meson.project_name()+'_VERSION_MINOR', minor)
-cfg.set( meson.project_name()+'_VERSION_PATCH', patch)
-cfg.set( meson.project_name()+'_BITWISE_VERSION', bitwise)
-
-ver_h = configure_file(input:  inc_base+'/ver.h.in',
-                       output: 'ver.h',
-                       configuration: cfg)
+subdir('include/'+meson.project_name())
 
 ################################################################################
 # Define the libraries
@@ -78,6 +58,13 @@ if not meson.is_subproject()
                   install: false,
                   link_args: test_args,
                   link_with: libtrower))
+
+  add_test_setup('valgrind',
+                 is_default: true,
+                 exe_wrapper: [ 'valgrind',
+                                '--leak-check=full',
+                                '--error-exitcode=1' ],
+                 timeout_multiplier: 2)
 endif
 
 ################################################################################
@@ -92,7 +79,9 @@ if reuse_bin.found()
                 output: ['license'])
 endif
 
-libtrower_dep = declare_dependency(include_directories: ['include'],
-                                   link_with: libtrower)
+libtrower_base64_dep = declare_dependency(include_directories: ['include'],
+                                          link_with: libtrower)
 
-meson.override_dependency(meson.project_name(), libtrower_dep)
+if meson.version().version_compare('>=0.54.0')
+  meson.override_dependency(meson.project_name(), libtrower_base64_dep)
+endif

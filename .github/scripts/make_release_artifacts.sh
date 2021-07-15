@@ -10,12 +10,12 @@ function how_to_use {
     echo "	-p the meson library provided or the project name by default Example: foo -> libfoo = libfoo_dep"
 }
 
-version=none
-repo_slug=none
-provides=none
+version="none"
+repo_slug="none"
+provides="none"
 meson=0
 
-while getopts ":v:r:pmh:" opt; do
+while getopts ":v:r:p:mh:" opt; do
     case ${opt} in
         v ) version=${OPTARG} ;;
         r ) repo_slug=${OPTARG} ;;

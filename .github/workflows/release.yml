@@ -24,7 +24,7 @@ jobs:
         shell: bash
       - name: Create tarball and sha256
         run: |
-          .github/scripts/make_release_artifacts -v ${version} -r '${{ github.repository }}' -m -p trower_base64
+          ../.github/scripts/make_release_artifacts -v ${version} -r '${{ github.repository }}' -m -p trower_base64
       - name: Prepare Release Body
         id: prep
         run: |

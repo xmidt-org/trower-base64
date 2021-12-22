@@ -24,3 +24,4 @@ jobs:
     uses: xmidt-org/.github/.github/workflows/meson-unit-test.yml@main
     secrets:
       sonar_login: ${{ secrets.SONAR_TOKEN }}
+      token: ${{ secrets.GITHUB_TOKEN }}

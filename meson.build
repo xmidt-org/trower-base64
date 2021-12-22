@@ -79,6 +79,16 @@ if reuse_bin.found()
                 output: ['license'])
 endif
 
+################################################################################
+# Add the coverity check target
+################################################################################
+
+alias_target('coverity', libtrower)
+
+################################################################################
+# External/consumer definitions
+################################################################################
+
 libtrower_base64_dep = declare_dependency(include_directories: ['include'],
                                           link_with: libtrower)
 

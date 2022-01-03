@@ -1,10 +1,10 @@
-/* SPDX-FileCopyrightText: 2016-2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2016-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <CUnit/Basic.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "../include/trower-base64/base64.h"
 
@@ -15,6 +15,7 @@ struct test_vector {
     const char *out;
 };
 
+// clang-format off
 struct test_vector common_decoder_tests[] = {
         /* Simple NULL, string length tests */
         {   .in = NULL,
@@ -165,14 +166,16 @@ struct test_vector common_decoder_tests[] = {
             .out_len = 269,
         },
     };
+// clang-format on
 
 
-void test_encoded_stuff( void (*fn)(const uint8_t*, const size_t, uint8_t*),
-                         const char *raw, size_t raw_size, const char *expected, size_t expected_size );
-void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
-                         const char *raw, size_t raw_size, const char *expected, size_t expected_size );
+void test_encoded_stuff(void (*fn)(const uint8_t *, const size_t, uint8_t *),
+                        const char *raw, size_t raw_size, const char *expected, size_t expected_size);
+void test_decoded_stuff(size_t (*fn)(const uint8_t *, const size_t, uint8_t *),
+                        const char *raw, size_t raw_size, const char *expected, size_t expected_size);
 
-void test_encoded_size() {
+void test_encoded_size()
+{
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(0), 0);
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(1), 4);
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(2), 4);
@@ -181,11 +184,13 @@ void test_encoded_size() {
     CU_ASSERT_EQUAL(b64_get_encoded_buffer_size(300), 400);
 }
 
-void test_b64url_encoded_size() {
+void test_b64url_encoded_size()
+{
     CU_ASSERT_EQUAL(b64url_get_encoded_buffer_size(0), 0);
 }
 
-void test_decoded_size() {
+void test_decoded_size()
+{
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(0), 0);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(1), 0);
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(2), 0);
@@ -194,7 +199,9 @@ void test_decoded_size() {
     CU_ASSERT_EQUAL(b64_get_decoded_buffer_size(8), 6);
 }
 
-void test_b64url_decoded_size() {
+void test_b64url_decoded_size()
+{
+    // clang-format off
     struct test {
         size_t expect;
         size_t in;
@@ -219,18 +226,21 @@ void test_b64url_decoded_size() {
         { 13, 18 },   {  0, 37 },   { 42, 56 },   { 56, 75 },
         { 14, 19 },   { 28, 38 },   {  0, 57 },   { 57, 76 },
     };
+    // clang-format on
 
-    for( size_t i = 0; i < sizeof(tests)/sizeof(struct test); i++ ) {
-        size_t rv = b64url_get_decoded_buffer_size( tests[i].in );
+    for (size_t i = 0; i < sizeof(tests) / sizeof(struct test); i++) {
+        size_t rv = b64url_get_decoded_buffer_size(tests[i].in);
 
-        if( rv != tests[i].expect ) {
-            printf( "Expected: %zd, got: %zd\n", tests[i].expect, rv );
+        if (rv != tests[i].expect) {
+            printf("Expected: %zd, got: %zd\n", tests[i].expect, rv);
         }
-        CU_ASSERT( rv == tests[i].expect );
+        CU_ASSERT(rv == tests[i].expect);
     }
 }
 
-void test_encode() {
+void test_encode()
+{
+    // clang-format off
     struct test_vector local[] = {
         {  8, "leasure.", 12, "bGVhc3VyZS4=" },
         {  7, "easure.",  12, "ZWFzdXJlLg==" },
@@ -254,14 +264,17 @@ void test_encode() {
             .in_len = 48,
         },
     };
+    // clang-format on
     struct test_vector *t = local;
 
-    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
-        test_encoded_stuff( b64_encode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(local) / sizeof(struct test_vector); i++) {
+        test_encoded_stuff(b64_encode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 }
 
-void test_url_encode() {
+void test_url_encode()
+{
+    // clang-format off
     struct test_vector local[] = {
         {  8, "leasure.", 11, "bGVhc3VyZS4" },
         {  7, "easure.",  10, "ZWFzdXJlLg"  },
@@ -285,52 +298,54 @@ void test_url_encode() {
             .in_len = 48,
         },
     };
+    // clang-format on
     struct test_vector *t = local;
 
-    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
-        test_encoded_stuff( b64url_encode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(local) / sizeof(struct test_vector); i++) {
+        test_encoded_stuff(b64url_encode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 }
 
 
-uint8_t* dup( const char *raw, size_t size )
+uint8_t *dup(const char *raw, size_t size)
 {
     uint8_t *tmp;
-    tmp = malloc( sizeof(char) * size );
-    memcpy( tmp, raw, size );
+    tmp = malloc(sizeof(char) * size);
+    memcpy(tmp, raw, size);
     return tmp;
 }
 
-void test_encoded_stuff( void (*fn)(const uint8_t*, const size_t, uint8_t*),
-                         const char *raw, size_t raw_size, const char *expected, size_t expected_size )
+void test_encoded_stuff(void (*fn)(const uint8_t *, const size_t, uint8_t *),
+                        const char *raw, size_t raw_size, const char *expected, size_t expected_size)
 {
     size_t i;
 
-    size_t workspace_size = (b64_encode == fn) ? b64_get_encoded_buffer_size(raw_size) :
-                                                 b64url_get_encoded_buffer_size(raw_size);
-    uint8_t *workspace = calloc(1, workspace_size);
-    uint8_t *tmp = dup( raw, raw_size );
+    size_t workspace_size = (b64_encode == fn) ? b64_get_encoded_buffer_size(raw_size) : b64url_get_encoded_buffer_size(raw_size);
+    uint8_t *workspace    = calloc(1, workspace_size);
+    uint8_t *tmp          = dup(raw, raw_size);
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
     // Use it, then free it.
     fn(tmp, raw_size, workspace);
     free(tmp);
 
-    //printf( "exp: %zd, got: %zd\n", expected_size, workspace_size );
-    CU_ASSERT_EQUAL_FATAL( expected_size, workspace_size );
-    for( i = 0; i < expected_size; i++ ) {
+    // printf( "exp: %zd, got: %zd\n", expected_size, workspace_size );
+    CU_ASSERT_EQUAL_FATAL(expected_size, workspace_size);
+    for (i = 0; i < expected_size; i++) {
         CU_ASSERT_EQUAL(workspace[i], (uint8_t) expected[i]);
-        if( workspace[i] != (uint8_t) expected[i] ) {
+        if (workspace[i] != (uint8_t) expected[i]) {
             printf("Encoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
-                    i, expected[i], (int) expected_size, expected,
-                    i, workspace[i], (int) workspace_size, workspace);
+                   i, expected[i], (int) expected_size, expected,
+                   i, workspace[i], (int) workspace_size, workspace);
         }
     }
     free(workspace);
 }
 
-void test_decode() {
+void test_decode()
+{
     struct test_vector *t = common_decoder_tests;
+    // clang-format off
     struct test_vector local[] = {
         /* len, input         len, expected */
         {  12, "bGVhc3VyZS4=", 8, "leasure."     },
@@ -361,24 +376,27 @@ void test_decode() {
             .out_len = 48,
         },
     };
+    // clang-format on
     uint8_t fake_buf;
 
-    for( size_t i = 0; i < sizeof(common_decoder_tests)/sizeof(struct test_vector); i++ ) {
-        test_decoded_stuff( b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(common_decoder_tests) / sizeof(struct test_vector); i++) {
+        test_decoded_stuff(b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 
     t = local;
-    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
-        test_decoded_stuff( b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(local) / sizeof(struct test_vector); i++) {
+        test_decoded_stuff(b64_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 
-    CU_ASSERT( 0 == b64_decode(NULL, 8, &fake_buf) );
-    CU_ASSERT( 0 == b64_decode(&fake_buf, 0, &fake_buf) );
-    CU_ASSERT( 0 == b64_decode(&fake_buf, 8, NULL) );
+    CU_ASSERT(0 == b64_decode(NULL, 8, &fake_buf));
+    CU_ASSERT(0 == b64_decode(&fake_buf, 0, &fake_buf));
+    CU_ASSERT(0 == b64_decode(&fake_buf, 8, NULL));
 }
 
-void test_url_decode() {
+void test_url_decode()
+{
     struct test_vector *t = common_decoder_tests;
+    // clang-format off
     struct test_vector local[] = {
         /* len, input       len, expected */
         {  3, "TWE",          2, "Ma"           },
@@ -412,168 +430,166 @@ void test_url_decode() {
             .out_len = 48,
         },
     };
+    // clang-format on
     uint8_t fake_buf;
 
-    for( size_t i = 0; i < sizeof(common_decoder_tests)/sizeof(struct test_vector); i++ ) {
-        test_decoded_stuff( b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(common_decoder_tests) / sizeof(struct test_vector); i++) {
+        test_decoded_stuff(b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 
     t = local;
-    for( size_t i = 0; i < sizeof(local)/sizeof(struct test_vector); i++ ) {
-        test_decoded_stuff( b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len );
+    for (size_t i = 0; i < sizeof(local) / sizeof(struct test_vector); i++) {
+        test_decoded_stuff(b64url_decode, t[i].in, t[i].in_len, t[i].out, t[i].out_len);
     }
 
-    CU_ASSERT( 0 == b64url_decode(NULL, 8, &fake_buf) );
-    CU_ASSERT( 0 == b64url_decode(&fake_buf, 0, &fake_buf) );
-    CU_ASSERT( 0 == b64url_decode(&fake_buf, 8, NULL) );
+    CU_ASSERT(0 == b64url_decode(NULL, 8, &fake_buf));
+    CU_ASSERT(0 == b64url_decode(&fake_buf, 0, &fake_buf));
+    CU_ASSERT(0 == b64url_decode(&fake_buf, 8, NULL));
 }
 
-void test_decoded_stuff( size_t (*fn)(const uint8_t*, const size_t, uint8_t*),
-                         const char *raw, size_t raw_size, const char *expected, size_t expected_size )
+void test_decoded_stuff(size_t (*fn)(const uint8_t *, const size_t, uint8_t *),
+                        const char *raw, size_t raw_size, const char *expected, size_t expected_size)
 {
     size_t i;
 
-    size_t workspace_size = (b64_decode == fn) ? b64_get_decoded_buffer_size(raw_size) :
-                                                 b64url_get_decoded_buffer_size(raw_size);
-    uint8_t *workspace = calloc(1, workspace_size);
-    uint8_t *tmp = dup( raw, raw_size );
+    size_t workspace_size = (b64_decode == fn) ? b64_get_decoded_buffer_size(raw_size) : b64url_get_decoded_buffer_size(raw_size);
+    uint8_t *workspace    = calloc(1, workspace_size);
+    uint8_t *tmp          = dup(raw, raw_size);
     size_t num_chars;
 
     // Copy the data into a malloc'ed buffer so valgrind can help us find problems
     // Use it, then free it.
-    num_chars = (fn)(tmp, raw_size, workspace);
+    num_chars = (fn) (tmp, raw_size, workspace);
     free(tmp);
 
-    CU_ASSERT_EQUAL( expected_size, num_chars );
-    if( expected_size != num_chars ) {
+    CU_ASSERT_EQUAL(expected_size, num_chars);
+    if (expected_size != num_chars) {
         printf("Size fail: raw='%.*s' expected='%.*s' :: %zd %zd\n",
                (int) raw_size, raw, (int) expected_size, expected,
                expected_size, num_chars);
     }
 
-    for( i = 0; i < expected_size; i++ ) {
+    for (i = 0; i < expected_size; i++) {
         CU_ASSERT_EQUAL(workspace[i], (uint8_t) expected[i]);
-        if( workspace[i] != (uint8_t) expected[i] ) {
+        if (workspace[i] != (uint8_t) expected[i]) {
             printf("Decoding Error: Expected[%zd:%c] '%*s' ::Actual[%zd:%c] '%*s'\n",
-                    i, expected[i], (int)expected_size, expected,
-                    i, workspace[i], (int)num_chars, workspace);
+                   i, expected[i], (int) expected_size, expected,
+                   i, workspace[i], (int) num_chars, workspace);
         }
     }
     free(workspace);
 }
 
-void test_decode_w_alloc_helper( uint8_t* (fn)(const uint8_t*, size_t, size_t*) )
+void test_decode_w_alloc_helper(uint8_t *(fn) (const uint8_t *, size_t, size_t *) )
 {
     uint8_t *rv;
-    const char *in = "TWFu";
+    const char *in  = "TWFu";
     const char *bad = "TW|u";
     size_t len;
 
     len = 99;
-    rv = fn( (uint8_t*) in, 4, &len );
-    CU_ASSERT_FATAL( NULL != rv );
-    CU_ASSERT( 3 == len );
-    CU_ASSERT( 'M' == rv[0] &&
-               'a' == rv[1] &&
-               'n' == rv[2] );
-    free( rv );
+    rv  = fn((uint8_t *) in, 4, &len);
+    CU_ASSERT_FATAL(NULL != rv);
+    CU_ASSERT(3 == len);
+    CU_ASSERT('M' == rv[0] && 'a' == rv[1] && 'n' == rv[2]);
+    free(rv);
 
-    CU_ASSERT( NULL == fn( (uint8_t*) in, 4, NULL ) );
+    CU_ASSERT(NULL == fn((uint8_t *) in, 4, NULL));
 
     len = 99;
-    CU_ASSERT( NULL == fn( (uint8_t*) in, 0, &len ) );
-    CU_ASSERT( 0 == len );
+    CU_ASSERT(NULL == fn((uint8_t *) in, 0, &len));
+    CU_ASSERT(0 == len);
 
     len = 99;
-    CU_ASSERT( NULL == fn( NULL, 4, &len ) );
-    CU_ASSERT( 0 == len );
+    CU_ASSERT(NULL == fn(NULL, 4, &len));
+    CU_ASSERT(0 == len);
 
     len = 99;
-    CU_ASSERT( NULL == fn( (uint8_t*) bad, 4, &len ) );
-    CU_ASSERT( 0 == len );
+    CU_ASSERT(NULL == fn((uint8_t *) bad, 4, &len));
+    CU_ASSERT(0 == len);
 }
 
-void test_encode_w_alloc_helper( char* (fn)(const uint8_t*, size_t, size_t*) )
+void test_encode_w_alloc_helper(char *(fn) (const uint8_t *, size_t, size_t *) )
 {
     char *rv;
     const char *in = "Man";
     size_t len;
 
     len = 99;
-    rv = fn( (uint8_t*) in, 3, &len );
-    CU_ASSERT_FATAL( NULL != rv );
-    CU_ASSERT( 4 == len );
-    CU_ASSERT( 'T'  == rv[0] &&
-               'W'  == rv[1] &&
-               'F'  == rv[2] &&
-               'u'  == rv[3] &&
-               '\0' == rv[4] );
-    free( rv );
+    rv  = fn((uint8_t *) in, 3, &len);
+    CU_ASSERT_FATAL(NULL != rv);
+    CU_ASSERT(4 == len);
+    CU_ASSERT('T' == rv[0]
+              && 'W' == rv[1]
+              && 'F' == rv[2]
+              && 'u' == rv[3]
+              && '\0' == rv[4]);
+    free(rv);
 
-    rv = fn( (uint8_t*) in, 3, NULL );
-    CU_ASSERT_FATAL( NULL != rv );
-    free( rv );
-
-    len = 99;
-    CU_ASSERT( NULL == fn( (uint8_t*) in, 0, &len ) );
-    CU_ASSERT( 0 == len );
+    rv = fn((uint8_t *) in, 3, NULL);
+    CU_ASSERT_FATAL(NULL != rv);
+    free(rv);
 
     len = 99;
-    CU_ASSERT( NULL == fn( NULL, 3, &len ) );
-    CU_ASSERT( 0 == len );
+    CU_ASSERT(NULL == fn((uint8_t *) in, 0, &len));
+    CU_ASSERT(0 == len);
+
+    len = 99;
+    CU_ASSERT(NULL == fn(NULL, 3, &len));
+    CU_ASSERT(0 == len);
 }
 
 
-void test_decode_w_alloc( void )
+void test_decode_w_alloc(void)
 {
-    test_decode_w_alloc_helper( b64_decode_with_alloc );
-    test_decode_w_alloc_helper( b64url_decode_with_alloc );
+    test_decode_w_alloc_helper(b64_decode_with_alloc);
+    test_decode_w_alloc_helper(b64url_decode_with_alloc);
 }
 
-void test_encode_w_alloc( void )
+void test_encode_w_alloc(void)
 {
-    test_encode_w_alloc_helper( b64_encode_with_alloc );
-    test_encode_w_alloc_helper( b64url_encode_with_alloc );
+    test_encode_w_alloc_helper(b64_encode_with_alloc);
+    test_encode_w_alloc_helper(b64url_encode_with_alloc);
 }
 
-void add_suites( CU_pSuite *suite )
+void add_suites(CU_pSuite *suite)
 {
-    *suite = CU_add_suite( "Base64 encoding tests", NULL, NULL );
-    CU_add_test( *suite, "Test the Encoded Size     ", test_encoded_size );
-    CU_add_test( *suite, "Test the Decoded Size     ", test_decoded_size );
-    CU_add_test( *suite, "Test the url Decoded Size ", test_b64url_decoded_size );
-    CU_add_test( *suite, "Test Encoding             ", test_encode );
-    CU_add_test( *suite, "Test Decoding             ", test_decode );
-    CU_add_test( *suite, "Test URL Decoding         ", test_url_decode );
-    CU_add_test( *suite, "Test URL Encoding         ", test_url_encode );
-    CU_add_test( *suite, "Test Alloc Decoding       ", test_decode_w_alloc );
-    CU_add_test( *suite, "Test Alloc Encoding       ", test_encode_w_alloc );
+    *suite = CU_add_suite("Base64 encoding tests", NULL, NULL);
+    CU_add_test(*suite, "Test the Encoded Size     ", test_encoded_size);
+    CU_add_test(*suite, "Test the Decoded Size     ", test_decoded_size);
+    CU_add_test(*suite, "Test the url Decoded Size ", test_b64url_decoded_size);
+    CU_add_test(*suite, "Test Encoding             ", test_encode);
+    CU_add_test(*suite, "Test Decoding             ", test_decode);
+    CU_add_test(*suite, "Test URL Decoding         ", test_url_decode);
+    CU_add_test(*suite, "Test URL Encoding         ", test_url_encode);
+    CU_add_test(*suite, "Test Alloc Decoding       ", test_decode_w_alloc);
+    CU_add_test(*suite, "Test Alloc Encoding       ", test_encode_w_alloc);
 }
 
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-int main( void )
+int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
-    if( CUE_SUCCESS == CU_initialize_registry() ) {
-        add_suites( &suite );
+    if (CUE_SUCCESS == CU_initialize_registry()) {
+        add_suites(&suite);
 
-        if( NULL != suite ) {
-            CU_basic_set_mode( CU_BRM_VERBOSE );
+        if (NULL != suite) {
+            CU_basic_set_mode(CU_BRM_VERBOSE);
             CU_basic_run_tests();
-            printf( "\n" );
-            CU_basic_show_failures( CU_get_failure_list() );
-            printf( "\n\n" );
+            printf("\n");
+            CU_basic_show_failures(CU_get_failure_list());
+            printf("\n\n");
             rv = CU_get_number_of_tests_failed();
         }
 
         CU_cleanup_registry();
     }
 
-    if( 0 != rv ) {
+    if (0 != rv) {
         return 1;
     }
     return 0;

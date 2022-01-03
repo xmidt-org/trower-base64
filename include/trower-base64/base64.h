@@ -1,4 +1,4 @@
-/* SPDX-FileCopyrightText: 2010-2021 Comcast Cable Communications Management, LLC */
+/* SPDX-FileCopyrightText: 2010-2022 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 #ifndef __BASE64_LIB__
 #define __BASE64_LIB__
@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /*----------------------------------------------------------------------------*/
 /*                             Standard Base64                                */
@@ -23,7 +23,7 @@ extern "C" {
  *
  *  @return size of the buffer required to hold the encoded data
  */
-size_t b64_get_encoded_buffer_size( const size_t decoded_size );
+size_t b64_get_encoded_buffer_size(const size_t decoded_size);
 
 
 /**
@@ -35,7 +35,7 @@ size_t b64_get_encoded_buffer_size( const size_t decoded_size );
  *
  * @return size of the raw data
  */
-size_t b64_get_decoded_buffer_size( const size_t encoded_size );
+size_t b64_get_decoded_buffer_size(const size_t encoded_size);
 
 
 /**
@@ -50,7 +50,7 @@ size_t b64_get_decoded_buffer_size( const size_t encoded_size );
  *  @param len  size of the raw data in bytes
  *  @param out  pointer to where the encoded data should be placed
  */
-void b64_encode( const uint8_t *raw, const size_t len, uint8_t *out );
+void b64_encode(const uint8_t *raw, const size_t len, uint8_t *out);
 
 
 /**
@@ -67,7 +67,7 @@ void b64_encode( const uint8_t *raw, const size_t len, uint8_t *out );
  * @return total number of bytes in the decoded array, or 0 if there was a
  *         decoding error
  */
-size_t b64_decode( const uint8_t *enc, const size_t len, uint8_t *out );
+size_t b64_decode(const uint8_t *enc, const size_t len, uint8_t *out);
 
 
 /**
@@ -83,7 +83,7 @@ size_t b64_decode( const uint8_t *enc, const size_t len, uint8_t *out );
  *
  * @return the buffer containing the raw bytes or NULL on error
  */
-uint8_t* b64_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_len );
+uint8_t *b64_decode_with_alloc(const uint8_t *enc, size_t len, size_t *out_len);
 
 
 /**
@@ -101,7 +101,7 @@ uint8_t* b64_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_len 
  *
  * @return the buffer containing the raw bytes or NULL on error
  */
-char* b64_encode_with_alloc( const uint8_t *raw, size_t len, size_t *out_len );
+char *b64_encode_with_alloc(const uint8_t *raw, size_t len, size_t *out_len);
 
 
 /*----------------------------------------------------------------------------*/
@@ -120,7 +120,7 @@ char* b64_encode_with_alloc( const uint8_t *raw, size_t len, size_t *out_len );
  *
  *  @return size of the buffer required to hold the encoded data
  */
-size_t b64url_get_encoded_buffer_size( const size_t decoded_size );
+size_t b64url_get_encoded_buffer_size(const size_t decoded_size);
 
 
 /**
@@ -133,7 +133,7 @@ size_t b64url_get_encoded_buffer_size( const size_t decoded_size );
  *
  * @return size of the raw data
  */
-size_t b64url_get_decoded_buffer_size( const size_t encoded_size );
+size_t b64url_get_decoded_buffer_size(const size_t encoded_size);
 
 
 /**
@@ -148,7 +148,7 @@ size_t b64url_get_decoded_buffer_size( const size_t encoded_size );
  *  @param len size of the raw data in bytes
  *  @param output pointer to where the encoded data should be placed
  */
-void b64url_encode( const uint8_t *raw, const size_t len, uint8_t *output );
+void b64url_encode(const uint8_t *raw, const size_t len, uint8_t *output);
 
 
 /**
@@ -165,7 +165,7 @@ void b64url_encode( const uint8_t *raw, const size_t len, uint8_t *output );
  * @return total number of bytes in the decoded array, or 0 if there was a
  *         decoding error
  */
-size_t b64url_decode( const uint8_t *enc, const size_t len, uint8_t *output );
+size_t b64url_decode(const uint8_t *enc, const size_t len, uint8_t *output);
 
 
 /**
@@ -181,7 +181,7 @@ size_t b64url_decode( const uint8_t *enc, const size_t len, uint8_t *output );
  *
  * @return the buffer containing the raw bytes or NULL on error
  */
-uint8_t* b64url_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_len );
+uint8_t *b64url_decode_with_alloc(const uint8_t *enc, size_t len, size_t *out_len);
 
 
 /**
@@ -199,7 +199,7 @@ uint8_t* b64url_decode_with_alloc( const uint8_t *enc, size_t len, size_t *out_l
  *
  * @return the buffer containing the raw bytes or NULL on error
  */
-char* b64url_encode_with_alloc( const uint8_t *raw, size_t len, size_t *out_len );
+char *b64url_encode_with_alloc(const uint8_t *raw, size_t len, size_t *out_len);
 
 
 #ifdef __cplusplus
